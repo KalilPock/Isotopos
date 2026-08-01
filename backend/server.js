@@ -16,7 +16,7 @@ const supabase = createClient(supabaseUrl, supabaseKey);
 
 // Rota de teste
 app.get('/api/status', (req, res) => {
-  res.json({ status: 'online', mensagem: 'Servidor Isótopos ativo! 🚀' });
+  res.json({ status: 'online', mensagem: 'Servidor Isótopos ativo!' });
 });
 
 // Rota oficial de Login integrada com o Supabase

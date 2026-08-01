@@ -1,0 +1,9 @@
+[build]
+  # Indica que a pasta base do frontend é a view
+  base = "view"
+  
+  # Força o npm a ignorar conflitos de peer dependencies e roda o build
+  command = "npm install --legacy-peer-deps && npm run build"
+  
+  # Pasta onde o Astro gera os arquivos finais de produção
+  publish = "dist"

@@ -1,4 +1,6 @@
-/* view/src/styles/global.css */
-@tailwind base;
-@tailwind components;
-@tailwind utilities;
+@import "tailwindcss";
+
+@theme {
+  --color-eva-purple: #6b21a8; /* Ajuste para o tom de roxo exato que você usava */
+  --color-eva-green: #22c55e;  /* Ajuste para o tom de verde neon exato que você usava */
+}

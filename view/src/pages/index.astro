@@ -13,8 +13,8 @@ import '../styles/global.css';
 
     <main class="w-full flex justify-center p-6">
       
-      <!-- Card com borda roxa sutil -->
-      <form class="w-full max-w-[420px] bg-zinc-900 border border-eva-purple/40 rounded-2xl p-8 sm:px-7 shadow-2xl shadow-eva-purple/10" action="" method="post">
+      <!-- Card com borda roxa sutil (ID adicionado para o JavaScript referenciar) -->
+      <form id="form-login" class="w-full max-w-[420px] bg-zinc-900 border border-eva-purple/40 rounded-2xl p-8 sm:px-7 shadow-2xl shadow-eva-purple/10">
         
         <!-- Título em verde neon -->
         <h1 class="text-center text-3xl mb-6 font-bold text-eva-green">Login</h1>
@@ -44,7 +44,7 @@ import '../styles/global.css';
 
         <!-- Botão Roxo com texto Verde e sombra/efeito hover -->
         <button 
-          class="w-full p-3 border-none rounded-lg bg-eva-purple text-eva-green font-bold text-lg tracking-wide cursor-pointer transition-all duration-200 hover:-translate-y-[2px] hover:bg-opacity-90 hover:shadow-lg hover:shadow-eva-purple/30 mt-2" 
+          class="w-full p-3 border-none rounded-lg bg-eva-purple text-eva-gresen font-bold text-lg tracking-wide cursor-pointer transition-all duration-200 hover:-translate-y-[2px] hover:bg-opacity-90 hover:shadow-lg hover:shadow-eva-purple/30 mt-2" 
           type="submit">
           Entrar
         </button>
@@ -52,5 +52,34 @@ import '../styles/global.css';
       </form>
     </main>
 
+   <!-- Script de integração com o Backend -->
+    <script>
+      const form = document.getElementById('form-login');
+
+      // O ponto de interrogação (?) avisa: "Só adicione o evento se o form existir"
+      form?.addEventListener('submit', async (evento) => {
+        evento.preventDefault();
+
+        // O "as HTMLInputElement" é só um crachá para o VS Code saber que tem um .value
+        const usuario = (document.getElementById('usuario') as HTMLInputElement).value;
+        const senha = (document.getElementById('senha') as HTMLInputElement).value;
+
+        try {
+          const resposta = await fetch('http://localhost:3000/api/login', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ usuario, senha })
+          });
+
+          const dados = await resposta.json();
+          alert(dados.mensagem);
+
+        } catch (erro) {
+          console.error("Erro:", erro);
+          alert("O servidor backend está offline.");
+        }
+      });
+    </script>
+    
   </body>
 </html>

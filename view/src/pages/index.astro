@@ -1,11 +1,56 @@
 ---
-import Welcome from '../components/Welcome.astro';
-import Layout from '../layouts/Layout.astro';
-
-// Welcome to Astro! Wondering what to do next? Check out the Astro documentation at https://docs.astro.build
-// Don't want to use any of this? Delete everything in this file, the `assets`, `components`, and `layouts` directories, and start fresh.
+import '../styles/global.css';
 ---
 
-<Layout>
-	<Welcome />
-</Layout>
+<html lang="pt-br">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Isotopos - Login</title>
+  </head>
+  
+  <body class="min-h-screen m-0 font-sans bg-zinc-950 text-slate-200 flex items-center justify-center">
+
+    <main class="w-full flex justify-center p-6">
+      
+      <!-- Card com borda roxa sutil -->
+      <form class="w-full max-w-[420px] bg-zinc-900 border border-eva-purple/40 rounded-2xl p-8 sm:px-7 shadow-2xl shadow-eva-purple/10" action="" method="post">
+        
+        <!-- Título em verde neon -->
+        <h1 class="text-center text-3xl mb-6 font-bold text-eva-green">Login</h1>
+
+        <div class="flex flex-col gap-2 mb-5">
+          <label class="font-semibold text-slate-300" for="usuario">Usuário</label>
+          <!-- Foco do input muda para a cor verde do Evangelion -->
+          <input 
+            class="w-full p-3 border border-zinc-700 rounded-lg bg-zinc-800 text-slate-200 outline-none transition-all duration-200 placeholder:text-zinc-500 focus:border-eva-green focus:ring-[3px] focus:ring-eva-green/20" 
+            type="text" 
+            name="usuario" 
+            id="usuario" 
+            placeholder="Digite seu usuário" 
+          />
+        </div>
+
+        <div class="flex flex-col gap-2 mb-5">
+          <label class="font-semibold text-slate-300" for="senha">Senha</label>
+          <input 
+            class="w-full p-3 border border-zinc-700 rounded-lg bg-zinc-800 text-slate-200 outline-none transition-all duration-200 placeholder:text-zinc-500 focus:border-eva-green focus:ring-[3px] focus:ring-eva-green/20" 
+            type="password" 
+            name="senha" 
+            id="senha" 
+            placeholder="Digite sua senha" 
+          />
+        </div>
+
+        <!-- Botão Roxo com texto Verde e sombra/efeito hover -->
+        <button 
+          class="w-full p-3 border-none rounded-lg bg-eva-purple text-eva-green font-bold text-lg tracking-wide cursor-pointer transition-all duration-200 hover:-translate-y-[2px] hover:bg-opacity-90 hover:shadow-lg hover:shadow-eva-purple/30 mt-2" 
+          type="submit">
+          Entrar
+        </button>
+
+      </form>
+    </main>
+
+  </body>
+</html>

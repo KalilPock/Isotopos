@@ -71,11 +71,14 @@ app.post('/api/login', async (req, res) => {
 
 const PORT = process.env.PORT || 3000;
 
+const PORT = process.env.PORT || 3000;
+
 app.listen(PORT, () => {
   console.log(`\n--- SISTEMA ISÓTOPOS ---`);
   console.log(`[Backend] Rodando na porta: ${PORT}`);
   
-  if (supabaseUrl && supabaseKey) {
+  // Corrigido para buscar direto das variáveis de ambiente
+  if (process.env.SUPABASE_URL && process.env.SUPABASE_KEY) {
     console.log(`[Database] Supabase inicializado com sucesso!`);
   } else {
     console.log(`[Database] ERRO: Chaves não encontradas no .env`);

@@ -71,8 +71,6 @@ app.post('/api/login', async (req, res) => {
 
 const PORT = process.env.PORT || 3000;
 
-const PORT = process.env.PORT || 3000;
-
 app.listen(PORT, () => {
   console.log(`\n--- SISTEMA ISÓTOPOS ---`);
   console.log(`[Backend] Rodando na porta: ${PORT}`);

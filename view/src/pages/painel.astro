@@ -1,0 +1,29 @@
+---
+// view/src/pages/painel.astro
+import Layout from '../layouts/Layout.astro';
+---
+
+<Layout title="Painel de Controle - Isotopos">
+  <div class="min-h-screen bg-zinc-950 text-slate-200 p-8">
+    <h1 class="text-3xl font-bold text-eva-purple">Painel do Sistema</h1>
+    <p class="mt-4 text-eva-green">Acesso autorizado.</p>
+    
+    <button id="btn-sair" class="mt-8 bg-red-600 px-4 py-2 rounded">Desconectar</button>
+  </div>
+
+  <script>
+    // 1. Verifica se o token existe assim que a página carrega
+    const token = localStorage.getItem('eva_token');
+    
+    if (!token) {
+      // Se não tem crachá, volta pra rua (login)
+      window.location.href = '/';
+    }
+
+    // 2. Lógica de Logout
+    document.getElementById('btn-sair')?.addEventListener('click', () => {
+      localStorage.removeItem('eva_token');
+      window.location.href = '/';
+    });
+  </script>
+</Layout>

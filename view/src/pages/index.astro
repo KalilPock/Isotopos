@@ -65,6 +65,7 @@ import '../styles/global.css';
         const senha = (document.getElementById('senha') as HTMLInputElement).value;
 
         const API_URL = import.meta.env.PUBLIC_API_URL || 'http://localhost:3000';
+        
         try {
           const resposta = await fetch(`${API_URL}/api/login`, {
             method: 'POST',
@@ -73,7 +74,16 @@ import '../styles/global.css';
           });
 
           const dados = await resposta.json();
-          alert(dados.mensagem);
+
+          if (resposta.ok) {
+            // Salva o token no navegador
+            localStorage.setItem('eva_token', dados.token); 
+            
+            // Redireciona para o painel
+            window.location.href = '/painel'; 
+          } else {
+            alert(dados.mensagem || 'Erro ao fazer login');
+          }
 
         } catch (erro) {
           console.error("Erro:", erro);

@@ -14,6 +14,32 @@ const supabaseUrl = process.env.SUPABASE_URL;
 const supabaseKey = process.env.SUPABASE_KEY;
 const supabase = createClient(supabaseUrl, supabaseKey);
 
+constverificarToken = async (req,res,next)=>{
+  //guardando token do front end
+  const token = req.headers.authorization?.split('')[1];
+
+  if(!token){
+    return res.status(401).json({erro:"Acesso negado, sem token!"})
+  }
+
+  //solicita para o SupaBae validar o token
+  const {data: {user}, error } = await supabase.auth.getUser(token);
+  
+  if(error || !user){
+    return res.status(403).json({erro:"Token invalido ou expirado."})
+  }
+
+  // Token válido! Guarda os dados do usuário na requisição e libera a passagem
+  req.usuario = user;
+  next();
+}
+
+//rota do painel
+app.get('/api/dados-painel', verificarToken, async (req, res) => {
+  // Só chega aqui se o token for válido
+  res.json({ mensagem: `Bem-vindo, ${req.usuario.email}!` });
+});
+
 // Rota de teste
 app.get('/api/status', (req, res) => {
   res.json({ status: 'online', mensagem: 'Servidor Isótopos ativo!' });

@@ -64,8 +64,9 @@ import '../styles/global.css';
         const usuario = (document.getElementById('usuario') as HTMLInputElement).value;
         const senha = (document.getElementById('senha') as HTMLInputElement).value;
 
+        const API_URL = import.meta.env.PUBLIC_API_URL || 'http://localhost:3000';
         try {
-          const resposta = await fetch('https://isotopos-backend.onrender.com', {
+          const resposta = await fetch(`${API_URL}/api/login`, {
             method: 'POST',
             headers: { 'Content-Type': 'application/json' },
             body: JSON.stringify({ usuario, senha })

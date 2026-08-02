@@ -10,29 +10,24 @@ app.use(cors());
 app.use(express.json());
 
 // Declaração global das chaves e do cliente Supabase
-const supabaseUrl = process.env.SUPABASE_URL;
-const supabaseKey = process.env.SUPABASE_KEY;
-const supabase = createClient(supabaseUrl, supabaseKey);
+const supabase = createClient(process.env.SUPABASE_URL, process.env.SUPABASE_KEY);
 
-constverificarToken = async (req,res,next)=>{
-  //guardando token do front end
-  const token = req.headers.authorization?.split('')[1];
+const verificarToken = async (req, res, next) => {
+  const token = req.headers.authorization?.split(' ')[1];
 
-  if(!token){
-    return res.status(401).json({erro:"Acesso negado, sem token!"})
+  if (!token) {
+    return res.status(401).json({ erro: 'Acesso negado. Crachá não fornecido.' });
   }
 
-  //solicita para o SupaBae validar o token
-  const {data: {user}, error } = await supabase.auth.getUser(token);
-  
-  if(error || !user){
-    return res.status(403).json({erro:"Token invalido ou expirado."})
+  const { data: { user }, error } = await supabase.auth.getUser(token);
+
+  if (error || !user) {
+    return res.status(403).json({ erro: 'Token inválido ou expirado.' });
   }
 
-  // Token válido! Guarda os dados do usuário na requisição e libera a passagem
   req.usuario = user;
   next();
-}
+};
 
 //rota do painel
 app.get('/api/dados-painel', verificarToken, async (req, res) => {

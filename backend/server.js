@@ -44,13 +44,12 @@ app.get('/api/status', (req, res) => {
 app.post('/api/login', async (req, res) => {
   const { usuario, senha } = req.body;
 
-  console.log(`[Backend] Tentativa de login recebida: ${usuario}`);
+  console.log(`[Backend] Tentativa de login recebida para: ${usuario}`);
 
-  // Truque: mapeia o nome de usuário simples para o formato de email do Supabase
-  const emailSupabase = `${usuario}@isotopos.com`;
-
+  // Agora passamos a variável 'usuario' DIRETAMENTE para o campo 'email', 
+  // sem concatenar nada falso no final.
   const { data, error } = await supabase.auth.signInWithPassword({
-    email: emailSupabase,
+    email: usuario, 
     password: senha,
   });
 
@@ -63,9 +62,12 @@ app.post('/api/login', async (req, res) => {
   }
 
   console.log(`[Backend] Login APROVADO para: ${usuario}`);
+  
+  // O Supabase devolve o token dentro de data.session.access_token
   res.json({ 
     sucesso: true, 
-    mensagem: `Acesso Autorizado! Bem-vindo de volta, ${usuario}.` 
+    mensagem: `Acesso Autorizado! Bem-vindo.`,
+    token: data.session.access_token 
   });
 });
 

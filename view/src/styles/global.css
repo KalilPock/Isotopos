@@ -1,6 +1,7 @@
 @import "tailwindcss";
 
+/* Cores tema do evangelion */
 @theme {
-  --color-eva-purple: #765898; /* Ajuste para o tom de roxo exato que você usava */
-  --color-eva-green: #52d053;  /* Ajuste para o tom de verde neon exato que você usava */
+  --color-eva-purple: #765898; 
+  --color-eva-green: #52d053; 
 }

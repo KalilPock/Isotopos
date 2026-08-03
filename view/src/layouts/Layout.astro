@@ -1,6 +1,6 @@
 ---
-// Importação CRUCIAL para o Tailwind funcionar nas páginas que usam este Layout
 import '../styles/global.css';
+import { ClientRouter } from 'astro:transitions';
 
 const { title = 'Isótopos' } = Astro.props;
 ---
@@ -12,8 +12,9 @@ const { title = 'Isótopos' } = Astro.props;
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
     <title>{title}</title>
+
+    <ClientRouter />
   </head>
-  <!-- O fundo escuro padrão já pode ficar no body do layout -->
   <body class="bg-zinc-950 text-slate-200 font-sans m-0 min-h-screen">
     <slot />
   </body>

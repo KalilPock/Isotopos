@@ -3,8 +3,8 @@ import Layout from '../layouts/Layout.astro';
 
 // No futuro, isso será substituído pela chamada ao Supabase!
 // Ex: const { data: pastas } = await supabase.from('pastas').select('*');
-const pastas = []; // Array vazio simulando o BD zerado
-const notaSelecionada = null; // Nenhuma nota aberta no momento
+const pastas: Array<unknown> = []; // Array vazio simulando o BD zerado
+const notaSelecionada: { titulo: string; conteudo: string } | null = null; // Nenhuma nota aberta no momento
 ---
 
 <Layout title="Notas - Isótopos">
@@ -54,14 +54,15 @@ const notaSelecionada = null; // Nenhuma nota aberta no momento
           <div class="flex-1 overflow-y-auto p-8 max-w-4xl mx-auto w-full mt-10">
             <input 
               type="text" 
-              value={notaSelecionada.titulo} 
+            
+              value={notaSelecionada} 
               class="w-full bg-transparent text-4xl font-bold text-zinc-100 mb-8 outline-none placeholder-zinc-700"
               placeholder="Sem título"
             />
             <textarea 
               class="w-full h-[60vh] bg-transparent text-zinc-300 resize-none outline-none leading-relaxed"
               placeholder="Comece a digitar sua nota aqui..."
-            >{notaSelecionada.conteudo}</textarea>
+            >{notaSelecionada}</textarea>
           </div>
         </div>
       ) : (

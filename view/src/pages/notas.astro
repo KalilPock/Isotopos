@@ -16,10 +16,10 @@ const notaSelecionada: { titulo: string; conteudo: string } | null = null; // Ne
       <!-- Controles -->
       <div class="h-12 border-b border-zinc-800 flex items-center justify-between px-4 text-zinc-400">
         <div class="flex gap-3">
-          <button class="hover:text-zinc-100 transition-colors" title="Nova nota">
+          <button id="btn-nova-nota" class="hover:text-zinc-100 transition-colors" title="Nova nota">
             <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 13h6m-3-3v6m5 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"></path></svg>
           </button>
-          <button class="hover:text-zinc-100 transition-colors" title="Nova pasta">
+          <button id="btn-nova-pasta" class="hover:text-zinc-100 transition-colors" title="Nova pasta">
             <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 13h6m-3-3v6m-9 1V7a2 2 0 012-2h6l2 2h6a2 2 0 012 2v8a2 2 0 01-2 2H5a2 2 0 01-2-2z"></path></svg>
           </button>
         </div>
@@ -76,4 +76,35 @@ const notaSelecionada: { titulo: string; conteudo: string } | null = null; // Ne
 
     </main>
   </div>
+  <script>
+    const btnNovaNota = document.getElementById('btn-nova-nota');
+    const btnNovaPasta = document.getElementById('btn-nova-pasta');
+
+    btnNovaPasta?.addEventListener('click', async ()=>{
+      const nomePasta = prompt("Digite o nome da nova pasta");
+
+      if(nomePasta){
+        //futura lógica do supabase
+        console.log(`[Frontend] Solicitação para criar pasta: ${nomePasta}`);
+
+        //futura lógica do supabase
+        alert(`Sucesso! A pasta ${nomePasta} será enviada para o banco de dados.`);
+      }
+    })
+
+    btnNovaNota?.addEventListener('click', async ()=>{
+      const nomeNota = prompt("Digite o nome da nova nota")
+
+      if(nomeNota){
+        //futura lógica do supabase
+
+        console.log(`[Frontend] Solicitação para criar pasta: ${nomeNota}`);
+        
+        //futura lógica do supabase
+        alert(`Sucesso! A nota ${nomeNota} será enviada para o banco de dados.`)
+      }
+    })
+  
+
+  </script>
 </Layout>

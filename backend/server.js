@@ -29,6 +29,17 @@ const verificarToken = async (req, res, next) => {
   next();
 };
 
+//exibe layout padrão para rotas inexistentes
+const verificaRotas = async (req, res) =>{
+  const url = req.originalUrl;
+
+  res.status(404).json({
+    sucesso: false,
+    mensagem:`Erro 404: a rota ${url} não existe no sistema`
+  })
+
+}
+
 //rota do painel
 app.get('/api/dados-painel', verificarToken, async (req, res) => {
   // Só chega aqui se o token for válido

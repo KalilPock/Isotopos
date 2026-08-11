@@ -33,11 +33,11 @@ const verificarToken = async (req, res, next) => {
 const verificaRotas = async (req, res) =>{
   const url = req.originalUrl;
 
+  //futuramente uma pagina Astro amigavel
   res.status(404).json({
     sucesso: false,
     mensagem:`Erro 404: a rota ${url} não existe no sistema`
-  })
-
+  }) 
 }
 
 //rota do painel
@@ -83,6 +83,9 @@ app.post('/api/login', async (req, res) => {
 });
 
 const PORT = process.env.PORT || 3000;
+
+// app.use() faz com que o Express aplique isso para QUALQUER método (GET, POST, etc)
+app.use(verificaRotas)
 
 app.listen(PORT, () => {
   console.log(`\n--- SISTEMA ISÓTOPOS ---`);

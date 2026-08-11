@@ -9,7 +9,7 @@ const notaSelecionada: { titulo: string; conteudo: string } | null = null; // Ne
 
 <Layout title="Notas - Isótopos">
   <div class="h-screen w-full bg-[#1e1e1e] text-zinc-300 flex overflow-hidden font-sans">
-    
+
     <!-- BARRA LATERAL -->
     <aside class="w-72 bg-[#181818] border-r border-zinc-800 flex flex-col flex-shrink-0">
       
@@ -83,12 +83,23 @@ const notaSelecionada: { titulo: string; conteudo: string } | null = null; // Ne
     btnNovaPasta?.addEventListener('click', async ()=>{
       const nomePasta = prompt("Digite o nome da nova pasta");
 
-      if(nomePasta){
+      
+      if(!nomePasta){
         //futura lógica do supabase
         console.log(`[Frontend] Solicitação para criar pasta: ${nomePasta}`);
 
-        //futura lógica do supabase
+        if(){
+          //futura lógica do supabase
+
         alert(`Sucesso! A pasta ${nomePasta} será enviada para o banco de dados.`);
+        }else{
+        //futura lógica do supaBase
+        alert(`Erro! Não foi possivél enviar a pasta ${nomePasta}, tente novamente `);
+        }
+
+        
+      }else{
+        alert("Erro! Nome da pasta vazio ou inválido");
       }
     })
 
@@ -105,6 +116,5 @@ const notaSelecionada: { titulo: string; conteudo: string } | null = null; // Ne
       }
     })
   
-
   </script>
 </Layout>

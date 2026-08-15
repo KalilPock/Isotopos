@@ -45,12 +45,13 @@ import PainelLayout from "../layouts/PainelLayout.astro";
       </div>
     </div>
   </div>
-</PainelLayout>
-
-<script>
+  <script>
   // Lógica provisória do botão de Logout
   document.getElementById("btn-sair")?.addEventListener("click", () => {
     localStorage.removeItem("eva_token");
     window.location.href = "/";
   });
 </script>
+
+</PainelLayout>
+

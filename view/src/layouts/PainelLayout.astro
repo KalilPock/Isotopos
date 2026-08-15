@@ -56,4 +56,15 @@ const tituloHeader = title.split(' -')[0];
 
     </main>
   </div>
+  <script>
+    // Lógica Global do Botão de Sair (Logout)
+        const btnSair = document.getElementById("btn-sair");
+        if (btnSair && !btnSair.dataset.logoutHandler) {
+          btnSair.addEventListener("click", () => {
+            localStorage.removeItem("eva_token");
+            window.location.href = "/";
+          });
+          btnSair.dataset.logoutHandler = "1";
+        }
+  </script>
 </Layout>

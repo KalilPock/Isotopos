@@ -1,11 +1,11 @@
 ---
-import '../styles/global.css';
-import { ClientRouter } from 'astro:transitions';
+import "../styles/global.css";
+import { ClientRouter } from "astro:transitions";
 
-const { title = 'Isótopos' } = Astro.props;
+const { title = "Isótopos" } = Astro.props;
 ---
 
-<!DOCTYPE html>
+<!doctype html>
 <html lang="pt-br">
   <head>
     <meta charset="UTF-8" />
@@ -17,5 +17,40 @@ const { title = 'Isótopos' } = Astro.props;
   </head>
   <body class="bg-zinc-950 text-slate-200 font-sans m-0 min-h-screen">
     <slot />
+
+    <script>
+      // Registra handlers tanto no carregamento inicial quanto em navegações client-side
+      function registerGlobalHandlers() {
+        // 1. Lógica Global do Menu Hambúrguer
+        const btnMenu = document.getElementById("btn-menu");
+        const sidebar = document.getElementById("sidebar");
+
+        if (btnMenu && sidebar && !btnMenu.dataset.menuHandler) {
+          btnMenu.addEventListener("click", () => {
+            if (sidebar.classList.contains("hidden")) {
+              sidebar.classList.remove("hidden");
+              sidebar.classList.add("flex");
+            } else {
+              sidebar.classList.add("hidden");
+              sidebar.classList.remove("flex");
+            }
+          });
+          btnMenu.dataset.menuHandler = "1";
+        }
+
+        // 2. Lógica Global do Botão de Sair (Logout)
+        const btnSair = document.getElementById("btn-sair");
+        if (btnSair && !btnSair.dataset.logoutHandler) {
+          btnSair.addEventListener("click", () => {
+            localStorage.removeItem("eva_token");
+            window.location.href = "/";
+          });
+          btnSair.dataset.logoutHandler = "1";
+        }
+      }
+
+      document.addEventListener("DOMContentLoaded", registerGlobalHandlers);
+      document.addEventListener("astro:page-load", registerGlobalHandlers);
+    </script>
   </body>
 </html>

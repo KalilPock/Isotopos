@@ -92,24 +92,6 @@ import Layout from '../layouts/Layout.astro';
   </div>
 
   <script>
-    // Lógica para o Menu Hambúrguer
-    document.getElementById('btn-menu')?.addEventListener('click', () => {
-      const sidebar = document.getElementById('sidebar');
-      
-      // Trava de segurança: se o sidebar não for encontrado, para a função aqui.
-      if (!sidebar) return;
-      
-      // O Tailwind precisa que a gente remova o 'flex' quando adicionamos o 'hidden'
-      if (sidebar.classList.contains('hidden')) {
-        sidebar.classList.remove('hidden');
-        sidebar.classList.add('flex');
-      } else {
-        sidebar.classList.add('hidden');
-        sidebar.classList.remove('flex');
-      }
-    });
-
-    
 
     // Lógica provisória do botão de Logout
     document.getElementById('btn-sair')?.addEventListener('click', () => {

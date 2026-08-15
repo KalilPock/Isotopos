@@ -1,10 +1,15 @@
 ---
-import Layout from '../layouts/Layout.astro';
+import PainelLayout from '../layouts/PainelLayout.astro';
 ---
-<Layout title="Painel de Usuários - Isótopos">
 
+<PainelLayout title="Painel de Usuários - Isótopos">
+  
+  <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
+    <!-- Card 1: Status da API -->
+    <div class="bg-zinc-900 p-6 rounded-xl border border-zinc-800 shadow-sm">
+      <h3 class="text-zinc-400 font-medium text-sm">Painel de usuários</h3>
+      <p class="text-2xl font-bold text-emerald-400">Online</p>
+    </div>
+  </div>
 
-<script>
-    
-</script>  
-</Layout>
+</PainelLayout>

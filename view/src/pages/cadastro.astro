@@ -1,19 +1,10 @@
 ---
-import '../styles/global.css';
+import Layout from '../layouts/Layout.astro';
 ---
 
-<html lang="pt-br">
-  <head>
-    <meta charset="UTF-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>Isotopos - Cadastro </title>
-  </head>
-  
-  <body class="min-h-screen m-0 font-sans bg-zinc-950 text-slate-200 flex items-center justify-center">
-
-    <main class="w-full flex justify-center p-6">
+<Layout title="Login - Isótopos">
+  <main class="w-full flex justify-center p-6">
       
-      <!-- Card com borda roxa sutil (ID adicionado para o JavaScript referenciar) -->
       <form id="form-email" class="w-full max-w-[420px] bg-zinc-900 border border-eva-purple/40 rounded-2xl p-8 sm:px-7 shadow-2xl shadow-eva-purple/10">
         
         <!-- Título em verde neon -->
@@ -69,6 +60,12 @@ import '../styles/global.css';
 
       </form>
     </main>
+</Layout>
+
+  
+  <body class="min-h-screen m-0 font-sans bg-zinc-950 text-slate-200 flex items-center justify-center">
+
+    
 
    <!-- Script de integração com o Backend -->
     <script>

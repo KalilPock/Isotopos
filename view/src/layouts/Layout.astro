@@ -21,19 +21,16 @@ const { title = "Isótopos" } = Astro.props;
     <script>
       // Registra handlers tanto no carregamento inicial quanto em navegações client-side
       function registerGlobalHandlers() {
+        
         // 1. Lógica Global do Menu Hambúrguer
         const btnMenu = document.getElementById("btn-menu");
         const sidebar = document.getElementById("sidebar");
 
         if (btnMenu && sidebar && !btnMenu.dataset.menuHandler) {
           btnMenu.addEventListener("click", () => {
-            if (sidebar.classList.contains("hidden")) {
-              sidebar.classList.remove("hidden");
-              sidebar.classList.add("flex");
-            } else {
-              sidebar.classList.add("hidden");
-              sidebar.classList.remove("flex");
-            }
+            // O .toggle() adiciona a classe se ela não existir, e remove se existir
+            sidebar.classList.toggle("hidden");
+            sidebar.classList.toggle("flex");
           });
           btnMenu.dataset.menuHandler = "1";
         }

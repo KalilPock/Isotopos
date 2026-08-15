@@ -1,0 +1,58 @@
+---
+// Importa o layout base que você já tem
+import Layout from './Layout.astro';
+
+// Pega o título que a página mandar
+const { title } = Astro.props;
+
+// Pega apenas a primeira parte do título para usar no Header (Ex: "Usuários")
+const tituloHeader = title.split(' -')[0];
+---
+
+<Layout title={title}>
+  <div class="min-h-screen bg-zinc-950 text-slate-200 flex flex-col md:flex-row">
+    
+    <!-- Sidebar / Menu Lateral Centralizado -->
+    <aside id="sidebar" class="w-full md:w-64 bg-zinc-900 border-r border-zinc-800 flex flex-col">
+      <div class="p-6 border-b border-zinc-800">
+        <h2 class="text-2xl font-black text-purple-500 tracking-wider">ISÓTOPOS</h2>
+      </div>
+      
+      <nav class="flex-1 p-4 space-y-2">
+        <a href="/painel" class="block px-4 py-2 hover:bg-zinc-800 text-zinc-400 hover:text-slate-200 rounded-lg transition-all">Visão Geral</a>
+        <a href="/notas" class="block px-4 py-2 hover:bg-zinc-800 text-zinc-400 hover:text-slate-200 rounded-lg transition-all">Anotações globais</a>
+        <a href="/usuarios" class="block px-4 py-2 hover:bg-zinc-800 text-zinc-400 hover:text-slate-200 rounded-lg transition-all">Usuários</a>
+      </nav>
+
+      <div class="p-6 border-t border-zinc-800">
+        <button id="btn-sair" class="w-full px-4 py-2 bg-zinc-800 hover:bg-red-600/90 text-zinc-300 hover:text-white rounded-lg transition-colors font-medium">
+          Desconectar
+        </button>
+      </div>
+    </aside>
+
+    <!-- Área Principal (Header fixo + Slot dinâmico) -->
+    <main class="flex-1 flex flex-col">
+      
+      <header class="flex justify-between items-center p-8 border-b border-zinc-800/50 mb-6">
+        <div class="flex items-center gap-4">
+          <button id="btn-menu" class="p-2 bg-zinc-800 hover:bg-zinc-700 text-zinc-300 hover:text-white rounded-lg transition-colors cursor-pointer" title="Alternar Menu">
+            <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16M4 18h16"></path></svg>
+          </button>
+          
+          <div>
+            <h1 class="text-3xl font-bold text-white">{tituloHeader}</h1>
+          </div>
+        </div>
+        
+        <div class="h-12 w-12 bg-purple-600 rounded-full flex items-center justify-center font-bold text-white shadow-lg shadow-purple-900/50">U</div>
+      </header>
+
+      <!-- A MÁGICA ACONTECE AQUI: O conteúdo das telas vaza para cá -->
+      <div class="px-8 pb-8 flex-1">
+        <slot />
+      </div>
+
+    </main>
+  </div>
+</Layout>

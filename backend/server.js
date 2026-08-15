@@ -1,7 +1,7 @@
 // backend/server.js
 require("dotenv").config();
 const express = require("express");
-const cors = require("cors");
+const cors = require('cors');
 const { createClient } = require("@supabase/supabase-js");
 
 const app = express();
@@ -123,15 +123,15 @@ app.get("/api/status", (req, res) => {
 });
 
 //Rota de Cadastro & SupaBase
-app.post("api/cadastro", async (req, res) => {
+app.post("/api/cadastro", async (req, res) => { 
   const { usuario, email, senha } = req.body;
   console.log(
     `[Backend] Tentativa de cadastro recebida para: ${usuario} & email: ${email}`,
   );
 
-  if (!usuaario || !email || !senha) {
+  if (!usuario || !email || !senha) {
     console.log(`[Backend] Erro: dados insuficientes no formulário!`);
-    res.status(400).json({
+    return res.status(400).json({
       sucesso: false,
       mensagem: "Preencha todos os campos!",
     });
@@ -155,7 +155,7 @@ app.post("api/cadastro", async (req, res) => {
     })
   }
 
-  console.log(`[Backend] - Cadastro aprovado! usuaario: ${user}`)
+  console.log(`[Backend] - Cadastro aprovado! usuario: ${usuario}`);
 
   const token = data.session ? data.session.access_token : null;
 

@@ -3,9 +3,8 @@ import Layout from "../layouts/Layout.astro";
 ---
 
 <Layout title="Login - Isótopos">
-  <!-- Repare que não tem <body>, <html>, nem import do global.css -->
-  <main class="w-full flex justify-center p-6">
-    <!-- Card com borda roxa sutil (ID adicionado para o JavaScript referenciar) -->
+  <!-- Adicionado 'h-screen' e 'items-center' para centralizar verticalmente -->
+  <main class="w-full h-screen flex justify-center items-center p-6">
     <form
       id="form-login"
       class="w-full max-w-[420px] bg-zinc-900 border border-eva-purple/40 rounded-2xl p-8 sm:px-7 shadow-2xl shadow-eva-purple/10"
@@ -14,8 +13,7 @@ import Layout from "../layouts/Layout.astro";
       <h1 class="text-center text-3xl mb-6 font-bold text-eva-green">Login</h1>
 
       <div class="flex flex-col gap-2 mb-5">
-        <label class="font-semibold text-slate-300" for="usuario">Usuário</label
-        >
+        <label class="font-semibold text-slate-300" for="usuario">Usuário</label>
         <!-- Foco do input muda para a cor verde do Evangelion -->
         <input
           class="w-full p-3 border border-zinc-700 rounded-lg bg-zinc-800 text-slate-200 outline-none transition-all duration-200 placeholder:text-zinc-500 focus:border-eva-green focus:ring-[3px] focus:ring-eva-green/20"
@@ -37,15 +35,15 @@ import Layout from "../layouts/Layout.astro";
         />
       </div>
 
-      <!-- Botão Roxo com texto Verde e sombra/efeito hover -->
+      <!-- Classe corrigida de text-eva-gresen para text-eva-green -->
       <button
-        class="w-full p-3 border-none rounded-lg bg-eva-purple text-eva-gresen font-bold text-lg tracking-wide cursor-pointer transition-all duration-200 hover:-translate-y-[2px] hover:bg-opacity-90 hover:shadow-lg hover:shadow-eva-purple/30 mt-2"
+        class="w-full p-3 border-none rounded-lg bg-eva-purple text-eva-green font-bold text-lg tracking-wide cursor-pointer transition-all duration-200 hover:-translate-y-[2px] hover:bg-opacity-90 hover:shadow-lg hover:shadow-eva-purple/30 mt-2"
         type="submit"
       >
         Entrar
       </button>
 
-      <!-- caso nãp tenha login -->
+      <!-- Link para Cadastro -->
       <div class="mt-5 text-center">
         <a
           href="/cadastro"
@@ -56,44 +54,40 @@ import Layout from "../layouts/Layout.astro";
       </div>
     </form>
   </main>
-</Layout>
 
-<!-- Script de integração com o Backend -->
-<script>
-  const form = document.getElementById("form-login");
+  <script>
+    const form = document.getElementById("form-login");
 
-  // O ponto de interrogação (?) avisa: "Só adicione o evento se o form existir"
-  form?.addEventListener("submit", async (evento) => {
-    evento.preventDefault();
+    form?.addEventListener("submit", async (evento) => {
+      evento.preventDefault();
 
-    // O "as HTMLInputElement" é só um crachá para o VS Code saber que tem um .value
-    const usuario = (document.getElementById("usuario") as HTMLInputElement)
-      .value;
-    const senha = (document.getElementById("senha") as HTMLInputElement).value;
+      const usuario = (document.getElementById("usuario") as HTMLInputElement).value;
+      const senha = (document.getElementById("senha") as HTMLInputElement).value;
 
-    const API_URL = import.meta.env.PUBLIC_API_URL || "http://localhost:3000";
+      const API_URL = import.meta.env.PUBLIC_API_URL || "http://localhost:3000";
 
-    try {
-      const resposta = await fetch(`${API_URL}/api/login`, {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ usuario, senha }),
-      });
+      try {
+        const resposta = await fetch(`${API_URL}/api/login`, {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({ usuario, senha }),
+        });
 
-      const dados = await resposta.json();
+        const dados = await resposta.json();
 
-      if (resposta.ok) {
-        // Salva o token no navegador
-        localStorage.setItem("eva_token", dados.token);
+        if (resposta.ok) {
+          // Salva o token no navegador
+          localStorage.setItem("eva_token", dados.token);
 
-        // Redireciona para o painel
-        window.location.href = "/painel";
-      } else {
-        alert(dados.mensagem || "Erro ao fazer login");
+          // Redireciona para o painel
+          window.location.href = "/painel";
+        } else {
+          alert(dados.mensagem || "Erro ao fazer login");
+        }
+      } catch (erro) {
+        console.error("Erro:", erro);
+        alert("O servidor backend está offline.");
       }
-    } catch (erro) {
-      console.error("Erro:", erro);
-      alert("O servidor backend está offline.");
-    }
-  });
-</script>
+    });
+  </script>
+</Layout>

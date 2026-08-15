@@ -1,112 +1,109 @@
 ---
-import Layout from '../layouts/Layout.astro';
+import Layout from "../layouts/Layout.astro";
 ---
 
-<Layout title="Login - Isótopos">
+<Layout title="Cadastro - Isótopos">
   <main class="w-full flex justify-center p-6">
-      
-      <form id="form-email" class="w-full max-w-[420px] bg-zinc-900 border border-eva-purple/40 rounded-2xl p-8 sm:px-7 shadow-2xl shadow-eva-purple/10">
-        
-        <!-- Título em verde neon -->
-        <h1 class="text-center text-3xl mb-6 font-bold text-eva-green">Cadastro</h1>
+    <form
+      id="form-email"
+      class="w-full max-w-[420px] bg-zinc-900 border border-eva-purple/40 rounded-2xl p-8 sm:px-7 shadow-2xl shadow-eva-purple/10"
+    >
+      <!-- Título em verde neon -->
+      <h1 class="text-center text-3xl mb-6 font-bold text-eva-green">Cadastro</h1>
 
-        <div class="flex flex-col gap-2 mb-5">
-          <label class="font-semibold text-slate-300" for="usuario">Usuário</label>
-          <!-- Foco do input muda para a cor verde do Evangelion -->
-          <input 
-            class="w-full p-3 border border-zinc-700 rounded-lg bg-zinc-800 text-slate-200 outline-none transition-all duration-200 placeholder:text-zinc-500 focus:border-eva-green focus:ring-[3px] focus:ring-eva-green/20" 
-            type="text" 
-            name="usuario" 
-            id="usuario" 
-            placeholder="Digite seu usuário" 
-          />
-        </div>
+      <div class="flex flex-col gap-2 mb-5">
+        <label class="font-semibold text-slate-300" for="usuario">Usuário</label
+        >
+        <!-- Foco do input muda para a cor verde do Evangelion -->
+        <input
+          class="w-full p-3 border border-zinc-700 rounded-lg bg-zinc-800 text-slate-200 outline-none transition-all duration-200 placeholder:text-zinc-500 focus:border-eva-green focus:ring-[3px] focus:ring-eva-green/20"
+          type="text"
+          name="usuario"
+          id="usuario"
+          placeholder="Digite seu usuário"
+        />
+      </div>
 
-        <div class="flex flex-col gap-2 mb-5">
-          <label class="font-semibold text-slate-300" for="email">E-mail</label>
-          <input 
-            class="w-full p-3 border border-zinc-700 rounded-lg bg-zinc-800 text-slate-200 outline-none transition-all duration-200 placeholder:text-zinc-500 focus:border-eva-green focus:ring-[3px] focus:ring-eva-green/20" 
-            type="email" 
-            name="email" 
-            id="email" 
-            placeholder="Digite seu e-mail" 
-          />
-        </div>
+      <div class="flex flex-col gap-2 mb-5">
+        <label class="font-semibold text-slate-300" for="email">E-mail</label>
+        <input
+          class="w-full p-3 border border-zinc-700 rounded-lg bg-zinc-800 text-slate-200 outline-none transition-all duration-200 placeholder:text-zinc-500 focus:border-eva-green focus:ring-[3px] focus:ring-eva-green/20"
+          type="email"
+          name="email"
+          id="email"
+          placeholder="Digite seu e-mail"
+        />
+      </div>
 
-        <div class="flex flex-col gap-2 mb-5">
-          <label class="font-semibold text-slate-300" for="senha">Senha</label>
-          <input 
-            class="w-full p-3 border border-zinc-700 rounded-lg bg-zinc-800 text-slate-200 outline-none transition-all duration-200 placeholder:text-zinc-500 focus:border-eva-green focus:ring-[3px] focus:ring-eva-green/20" 
-            type="password" 
-            name="senha" 
-            id="senha" 
-            placeholder="Digite sua senha" 
-          />
-        </div>
+      <div class="flex flex-col gap-2 mb-5">
+        <label class="font-semibold text-slate-300" for="senha">Senha</label>
+        <input
+          class="w-full p-3 border border-zinc-700 rounded-lg bg-zinc-800 text-slate-200 outline-none transition-all duration-200 placeholder:text-zinc-500 focus:border-eva-green focus:ring-[3px] focus:ring-eva-green/20"
+          type="password"
+          name="senha"
+          id="senha"
+          placeholder="Digite sua senha"
+        />
+      </div>
 
-        <!-- Botão Roxo com texto Verde e sombra/efeito hover -->
-        <button 
-          class="w-full p-3 border-none rounded-lg bg-eva-purple text-eva-gresen font-bold text-lg tracking-wide cursor-pointer transition-all duration-200 hover:-translate-y-[2px] hover:bg-opacity-90 hover:shadow-lg hover:shadow-eva-purple/30 mt-2" 
-          type="submit">
-          Cadastrar
-        </button>
+      <!-- Botão Roxo com texto Verde e sombra/efeito hover -->
+      <button
+        class="w-full p-3 border-none rounded-lg bg-eva-purple text-eva-gresen font-bold text-lg tracking-wide cursor-pointer transition-all duration-200 hover:-translate-y-[2px] hover:bg-opacity-90 hover:shadow-lg hover:shadow-eva-purple/30 mt-2"
+        type="submit"
+      >
+        Cadastrar
+      </button>
 
-        <!-- caso ja tenha login -->
-        <div class="mt-5 text-center">
-          <a href="/login" class="text-sm text-zinc-400 hover:text-eva-green transition-colors">
-            Já possui uma conta? Faça login
-          </a>
-        </div>
+      <!-- caso ja tenha login -->
+      <div class="mt-5 text-center">
+        <a
+          href="/login"
+          class="text-sm text-zinc-400 hover:text-eva-green transition-colors"
+        >
+          Já possui uma conta? Faça login
+        </a>
+      </div>
+    </form>
+  </main>
+  <script>
+    const form = document.getElementById("form-email");
 
-      </form>
-    </main>
-</Layout>
+    // O ponto de interrogação (?) avisa: "Só adicione o evento se o form existir"
+    form?.addEventListener("submit", async (evento) => {
+      evento.preventDefault();
 
-  
-  <body class="min-h-screen m-0 font-sans bg-zinc-950 text-slate-200 flex items-center justify-center">
+      // O "as HTMLInputElement" é só um crachá para o VS Code saber que tem um .value
+      const usuario = (document.getElementById("usuario") as HTMLInputElement)
+        .value;
+      const email = (document.getElementById("email") as HTMLInputElement)
+        .value;
+      const senha = (document.getElementById("senha") as HTMLInputElement)
+        .value;
 
-    
+      const API_URL = import.meta.env.PUBLIC_API_URL || "http://localhost:3000";
 
-   <!-- Script de integração com o Backend -->
-    <script>
-      const form = document.getElementById('form-email');
+      try {
+        const resposta = await fetch(`${API_URL}/api/cadastro`, {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({ usuario, email, senha }),
+        });
 
-      // O ponto de interrogação (?) avisa: "Só adicione o evento se o form existir"
-      form?.addEventListener('submit', async (evento) => {
-        evento.preventDefault();
+        const dados = await resposta.json();
 
-        // O "as HTMLInputElement" é só um crachá para o VS Code saber que tem um .value
-        const usuario = (document.getElementById('usuario') as HTMLInputElement).value;
-        const email = (document.getElementById('email') as HTMLInputElement).value;
-        const senha = (document.getElementById('senha') as HTMLInputElement).value;
+        if (resposta.ok) {
+          // Salva o token no navegador
+          localStorage.setItem("eva_token", dados.token);
 
-        const API_URL = import.meta.env.PUBLIC_API_URL || 'http://localhost:3000';
-        
-        try {
-          const resposta = await fetch(`${API_URL}/api/cadastro`, {
-            method: 'POST',
-            headers: { 'Content-Type': 'application/json' },
-            body: JSON.stringify({ usuario, email, senha })
-          });
-
-          const dados = await resposta.json();
-
-          if (resposta.ok) {
-            // Salva o token no navegador
-            localStorage.setItem('eva_token', dados.token); 
-            
-            // Redireciona para o painel
-            window.location.href = '/painel'; 
-          } else {
-            alert(dados.mensagem || 'Erro ao cadastrar');
-          }
-
-        } catch (erro) {
-          console.error("Erro:", erro);
-          alert("O servidor backend está offline.");
+          // Redireciona para o painel
+          window.location.href = "/painel";
+        } else {
+          alert(dados.mensagem || "Erro ao cadastrar");
         }
-      });
-    </script>
-    
-  </body>
-</html>
+      } catch (erro) {
+        console.error("Erro:", erro);
+        alert("O servidor backend está offline.");
+      }
+    });
+  </script>
+</Layout>

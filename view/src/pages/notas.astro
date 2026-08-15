@@ -1,10 +1,22 @@
 ---
 import PainelLayout from '../layouts/PainelLayout.astro';
 
-// AS VARIÁVEIS DO ASTRO PRECISAM FICAR AQUI NO TOPO (Frontmatter)!
-// No futuro, isso será substituído pela chamada ao banco de dados.
-const pastas: any[] = []; // Array vazio simulando o BD zerado
-const notaSelecionada: any = null; // Nenhuma nota aberta no momento
+// Usamos 'let' para poder sobrescrever o array vazio com os dados reais
+let pastas: any[] = []; 
+const notaSelecionada: any = null; 
+
+try {
+  // O Astro faz essa requisição por debaixo dos panos antes de carregar a tela
+  const API_URL = import.meta.env.PUBLIC_API_URL || 'http://localhost:3000';
+  const resposta = await fetch(`${API_URL}/api/pastas`);
+  const dados = await resposta.json();
+
+  if (dados.sucesso) {
+    pastas = dados.pastas; // Substitui o array vazio pelo que veio do banco!
+  }
+} catch (erro) {
+  console.error("Erro ao carregar pastas no servidor:", erro);
+}
 ---
 
 <PainelLayout title="Notas - Isótopos">
@@ -38,7 +50,20 @@ const notaSelecionada: any = null; // Nenhuma nota aberta no momento
           </div>
         ) : (
           <div class="space-y-1">
-             {/* O comentário HTML aqui foi corrigido para JSX para não apitar erro! */}
+             {/* O .map() pega cada 'pasta' do banco e cria este HTML */}
+             {pastas.map((pasta) => (
+                <details class="group">
+                  <summary class="flex items-center gap-1.5 p-1 rounded hover:bg-zinc-800/50 cursor-pointer list-none text-zinc-400 hover:text-zinc-200">
+                    <svg class="w-4 h-4 transition-transform group-open:rotate-90" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"></path></svg>
+                    {pasta.nome}
+                  </summary>
+                  
+                  {/* Espaço reservado para as futuras notas desta pasta */}
+                  <div class="pl-4 ml-1.5 border-l border-zinc-800 mt-1 space-y-1 text-xs text-zinc-600 italic">
+                    Sem notas nesta pasta...
+                  </div>
+                </details>
+             ))}
           </div>
         )}
 
@@ -79,11 +104,40 @@ const notaSelecionada: any = null; // Nenhuma nota aberta no momento
     const btnNovaPasta = document.getElementById('btn-nova-pasta');
 
     btnNovaPasta?.addEventListener('click', async () => {
-      const nomePasta = prompt("Digite o nome da nova pasta");
+      const nomePasta = prompt("Digite o nome da nova pasta:");
 
       if (nomePasta) {
-        console.log(`[Frontend] Solicitação para criar pasta: ${nomePasta}`);
-        alert(`Sucesso! A pasta ${nomePasta} será enviada para o banco de dados.`);
+        console.log(`[Frontend] Enviando "${nomePasta}" para o backend...`);
+        
+        // Pega a URL do ambiente ou usa o localhost padrão
+        const API_URL = import.meta.env.PUBLIC_API_URL || 'http://localhost:3000';
+        
+        try {
+          const resposta = await fetch(`${API_URL}/api/pastas`, {
+            method: 'POST',
+            headers: { 
+              'Content-Type': 'application/json' 
+              // Futuramente, enviaremos o token de autenticação aqui
+              // 'Authorization': `Bearer ${localStorage.getItem('eva_token')}`
+            },
+            body: JSON.stringify({ nome: nomePasta })
+          });
+
+          const dados = await resposta.json();
+
+          if (resposta.ok) {
+            alert(`Gaveta "${dados.pasta.nome}" criada com sucesso!`);
+            // Recarrega a página para o Astro puxar a lista atualizada do banco
+            window.location.reload();
+          } else {
+            alert(dados.mensagem || 'Erro ao criar a pasta no servidor.');
+          }
+
+        } catch (erro) {
+          console.error("Erro:", erro);
+          alert("Falha de conexão: O servidor backend Node.js está offline.");
+        }
+
       } else if (nomePasta === "") {
         alert("Erro! O nome da pasta não pode estar vazio.");
       }

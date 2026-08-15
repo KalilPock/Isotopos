@@ -54,6 +54,69 @@ app.get("/api/dados-painel", verificarToken, async (req, res) => {
   res.json({ mensagem: `Bem-vindo, ${req.usuario.email}!` });
 });
 
+// Rota para CRIAR uma nova pasta
+app.post('/api/pastas', async (req, res) => {
+  // 1. Recebe o nome que o frontend enviou
+  const { nome } = req.body;
+
+  if (!nome) {
+    console.log('[Backend] Tentativa de criar pasta sem nome bloqueada.');
+    return res.status(400).json({ 
+      sucesso: false, 
+      mensagem: 'O nome da pasta é obrigatório!' 
+    });
+  }
+
+  console.log(`[Backend] Solicitando ao Supabase a criação da pasta: "${nome}"`);
+
+  //Comunicação com o Supabase usando o padrão Builder
+  const { data, error } = await supabase
+    .from('pastas')
+    .insert([
+      { nome: nome } 
+    ])
+    .select(); // O .select() faz o Supabase devolver a linha criada (com o ID gerado)
+
+
+  if (error) {
+    console.error(`[Backend] Erro no Supabase: ${error.message}`);
+    return res.status(500).json({ 
+      sucesso: false, 
+      mensagem: `Erro ao salvar a pasta: ${error.message}` 
+    });
+  }
+
+  console.log(`[Backend] Pasta criada com sucesso! ID: ${data[0].id}`);
+  
+  res.status(201).json({
+    sucesso: true,
+    mensagem: 'Pasta criada perfeitamente!',
+    pasta: data[0] 
+  });
+});
+
+// Rota para LISTAR todas as pastas
+app.get('/api/pastas', async (req, res) => {
+  console.log('[Backend] Buscando lista de pastas...');
+
+  // O .select('*') pega todas as colunas. O .order() organiza pelas mais antigas primeiro
+  const { data, error } = await supabase
+    .from('pastas')
+    .select('*')
+    .order('criado_em', { ascending: true });
+
+  if (error) {
+    console.error(`[Backend] Erro ao buscar pastas: ${error.message}`);
+    return res.status(500).json({ sucesso: false, mensagem: error.message });
+  }
+
+  res.status(200).json({
+    sucesso: true,
+    pastas: data // Devolve o array completo de pastas do banco!
+  });
+});
+
+
 // Rota de teste
 app.get("/api/status", (req, res) => {
   res.json({ status: "online", mensagem: "Servidor Isótopos ativo!" });

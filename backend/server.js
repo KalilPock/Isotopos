@@ -51,7 +51,27 @@ app.get('/api/status', (req, res) => {
   res.json({ status: 'online', mensagem: 'Servidor Isótopos ativo!' });
 });
 
-// Rota oficial de Login integrada com o Supabase
+//Rota de Cadastro & SupaBase
+app.post('api/cadastro', async (req, res) =>{
+  const {usuario, email, senha} = req.body;
+  console.log(`[Backend] Tentativa de cadastro recebida para: ${usuario} & email: ${email}`)
+
+  const {data, error} = await supabase.auth.sig
+  if(!usuaario || !email || !senha){
+    console.log(`[Backend] Erro: dados insuficientes no formulário!`)
+    res.status(400).json({
+      sucesso: false,
+      mensagem:"Preencha todos os campos!"
+    })
+  }
+
+  return res.status(200).json({
+    sucesso:true,
+    mensagem:"Conexão Front-end ---> Back-end - OK"
+  })
+})
+
+// Rota de Login integrada com o Supabase
 app.post('/api/login', async (req, res) => {
   const { usuario, senha } = req.body;
 

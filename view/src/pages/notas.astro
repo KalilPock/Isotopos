@@ -54,15 +54,14 @@ const notaSelecionada: { titulo: string; conteudo: string } | null = null; // Ne
           <div class="flex-1 overflow-y-auto p-8 max-w-4xl mx-auto w-full mt-10">
             <input 
               type="text" 
-            
-              value={notaSelecionada} 
+              value={notaSelecionada.titulo} 
               class="w-full bg-transparent text-4xl font-bold text-zinc-100 mb-8 outline-none placeholder-zinc-700"
               placeholder="Sem título"
             />
             <textarea 
               class="w-full h-[60vh] bg-transparent text-zinc-300 resize-none outline-none leading-relaxed"
               placeholder="Comece a digitar sua nota aqui..."
-            >{notaSelecionada}</textarea>
+            >{notaSelecionada.conteudo}</textarea>
           </div>
         </div>
       ) : (
@@ -83,22 +82,12 @@ const notaSelecionada: { titulo: string; conteudo: string } | null = null; // Ne
     btnNovaPasta?.addEventListener('click', async ()=>{
       const nomePasta = prompt("Digite o nome da nova pasta");
 
-      
-      if(!nomePasta){
-        //futura lógica do supabase
+      if(nomePasta){
+        // futura lógica do supabase
         console.log(`[Frontend] Solicitação para criar pasta: ${nomePasta}`);
-
-        if(){
-          //futura lógica do supabase
-
+        // Simulação de sucesso (substituir por chamada ao backend)
         alert(`Sucesso! A pasta ${nomePasta} será enviada para o banco de dados.`);
-        }else{
-        //futura lógica do supaBase
-        alert(`Erro! Não foi possivél enviar a pasta ${nomePasta}, tente novamente `);
-        }
-
-        
-      }else{
+      } else {
         alert("Erro! Nome da pasta vazio ou inválido");
       }
     })

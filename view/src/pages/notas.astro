@@ -1,243 +1,133 @@
 ---
-import PainelLayout from "../layouts/PainelLayout.astro";
-
-// Usamos 'let' para poder sobrescrever o array vazio com os dados reais
-let pastas: any[] = [];
-const notaSelecionada: any = null;
-
-try {
-  // O Astro faz essa requisição por debaixo dos panos antes de carregar a tela
-  const API_URL = import.meta.env.PUBLIC_API_URL || "http://localhost:3000";
-  const resposta = await fetch(`${API_URL}/api/pastas`);
-  // Verifica se o servidor devolveu um JSON ou quebrou devolvendo HTML
-  const tipoConteudo = resposta.headers.get("content-type");
-  let dados = {};
-
-  if (tipoConteudo && tipoConteudo.includes("application/json")) {
-    dados = await resposta.json();
-  } else {
-    throw new Error(
-      "O servidor não devolveu um JSON válido. Verifique a URL da rota.",
-    );
-  }
-
-  if (dados.sucesso) {
-    pastas = dados.pastas; // Substitui o array vazio pelo que veio do banco!
-  }
-} catch (erro) {
-  console.error("Erro ao carregar pastas no servidor:", erro);
-}
+import PainelLayout from '../layouts/PainelLayout.astro';
 ---
 
 <PainelLayout title="Notas - Isótopos">
-  <!-- Container ajustado para não quebrar a tela com o header do PainelLayout -->
-  <div
-    class="border border-zinc-800 rounded-xl h-[calc(100vh-150px)] w-full bg-[#1e1e1e] text-zinc-300 flex overflow-hidden font-sans shadow-2xl"
-  >
+  
+  <div class="border border-zinc-800 rounded-xl h-[calc(100vh-150px)] w-full bg-[#1e1e1e] text-zinc-300 flex overflow-hidden font-sans shadow-2xl">
+
     <!-- BARRA LATERAL -->
-    <aside
-      class="w-72 bg-[#181818] border-r border-zinc-800 flex flex-col flex-shrink-0"
-    >
+    <aside class="w-72 bg-[#181818] border-r border-zinc-800 flex flex-col flex-shrink-0">
+      
       <!-- Controles -->
-      <div
-        class="h-12 border-b border-zinc-800 flex items-center justify-between px-4 text-zinc-400"
-      >
+      <div class="h-12 border-b border-zinc-800 flex items-center justify-between px-4 text-zinc-400">
         <div class="flex gap-3">
-          <button
-            id="btn-nova-nota"
-            class="hover:text-zinc-100 transition-colors"
-            title="Nova nota"
-          >
-            <svg
-              class="w-5 h-5"
-              fill="none"
-              stroke="currentColor"
-              viewBox="0 0 24 24"
-              ><path
-                stroke-linecap="round"
-                stroke-linejoin="round"
-                stroke-width="2"
-                d="M9 13h6m-3-3v6m5 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"
-              ></path></svg
-            >
+          <button id="btn-nova-nota" class="hover:text-zinc-100 transition-colors" title="Nova nota">
+            <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 13h6m-3-3v6m5 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"></path></svg>
           </button>
-          <button
-            id="btn-nova-pasta"
-            class="hover:text-zinc-100 transition-colors"
-            title="Nova pasta"
-          >
-            <svg
-              class="w-5 h-5"
-              fill="none"
-              stroke="currentColor"
-              viewBox="0 0 24 24"
-              ><path
-                stroke-linecap="round"
-                stroke-linejoin="round"
-                stroke-width="2"
-                d="M9 13h6m-3-3v6m-9 1V7a2 2 0 012-2h6l2 2h6a2 2 0 012 2v8a2 2 0 01-2 2H5a2 2 0 01-2-2z"
-              ></path></svg
-            >
+          <button id="btn-nova-pasta" class="hover:text-zinc-100 transition-colors" title="Nova pasta">
+            <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 13h6m-3-3v6m-9 1V7a2 2 0 012-2h6l2 2h6a2 2 0 012 2v8a2 2 0 01-2 2H5a2 2 0 01-2-2z"></path></svg>
           </button>
         </div>
       </div>
 
-      <!-- Árvore de Diretórios (Dinâmica) -->
-      <div class="flex-1 overflow-y-auto p-4 text-sm select-none">
-        {
-          pastas.length === 0 ? (
-            <div class="text-center text-zinc-600 mt-10 flex flex-col items-center">
-              <svg
-                class="w-12 h-12 mb-3 text-zinc-700"
-                fill="none"
-                stroke="currentColor"
-                viewBox="0 0 24 24"
-              >
-                <path
-                  stroke-linecap="round"
-                  stroke-linejoin="round"
-                  stroke-width="1"
-                  d="M3 7v10a2 2 0 002 2h14a2 2 0 002-2V9a2 2 0 00-2-2h-6l-2-2H5a2 2 0 00-2 2z"
-                />
-              </svg>
-              <p>Seu cofre está vazio.</p>
-              <p class="text-xs mt-1">Crie uma nova pasta ou nota.</p>
-            </div>
-          ) : (
-            <div class="space-y-1">
-              {/* O .map() pega cada 'pasta' do banco e cria este HTML */}
-              {pastas.map((pasta) => (
-                <details class="group">
-                  <summary class="flex items-center gap-1.5 p-1 rounded hover:bg-zinc-800/50 cursor-pointer list-none text-zinc-400 hover:text-zinc-200">
-                    <svg
-                      class="w-4 h-4 transition-transform group-open:rotate-90"
-                      fill="none"
-                      stroke="currentColor"
-                      viewBox="0 0 24 24"
-                    >
-                      <path
-                        stroke-linecap="round"
-                        stroke-linejoin="round"
-                        stroke-width="2"
-                        d="M9 5l7 7-7 7"
-                      />
-                    </svg>
-                    {pasta.nome}
-                  </summary>
-
-                  {/* Espaço reservado para as futuras notas desta pasta */}
-                  <div class="pl-4 ml-1.5 border-l border-zinc-800 mt-1 space-y-1 text-xs text-zinc-600 italic">
-                    Sem notas nesta pasta...
-                  </div>
-                </details>
-              ))}
-            </div>
-          )
-        }
+      <!-- Container onde o JavaScript vai injetar as pastas vivas -->
+      <div id="lista-pastas" class="flex-1 overflow-y-auto p-4 text-sm select-none">
+        <!-- Texto de carregamento inicial -->
+        <div class="text-center text-zinc-600 mt-10">
+          <p class="animate-pulse">Carregando cofre...</p>
+        </div>
       </div>
+
     </aside>
 
     <!-- ÁREA PRINCIPAL -->
     <main class="flex-1 flex flex-col bg-[#1e1e1e]">
-      {
-        notaSelecionada ? (
-          <div class="flex-1 flex flex-col">
-            <div class="flex-1 overflow-y-auto p-8 max-w-4xl mx-auto w-full mt-10">
-              <input
-                type="text"
-                value={notaSelecionada.titulo}
-                class="w-full bg-transparent text-4xl font-bold text-zinc-100 mb-8 outline-none placeholder-zinc-700"
-                placeholder="Sem título"
-              />
-              <textarea
-                class="w-full h-[60vh] bg-transparent text-zinc-300 resize-none outline-none leading-relaxed"
-                placeholder="Comece a digitar sua nota aqui..."
-              >
-                {notaSelecionada.conteudo}
-              </textarea>
-            </div>
-          </div>
-        ) : (
-          <div class="flex-1 flex flex-col items-center justify-center text-zinc-500">
-            <svg
-              class="w-16 h-16 mb-4 text-zinc-700/50"
-              fill="none"
-              stroke="currentColor"
-              viewBox="0 0 24 24"
-            >
-              <path
-                stroke-linecap="round"
-                stroke-linejoin="round"
-                stroke-width="1"
-                d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z"
-              />
-            </svg>
-            <h2 class="text-xl font-medium text-zinc-400">
-              Nenhuma nota aberta
-            </h2>
-            <p class="text-sm mt-2 text-zinc-600">
-              Selecione um arquivo na barra lateral para começar.
-            </p>
-          </div>
-        )
-      }
+      <!-- Placeholder de nota vazia -->
+      <div class="flex-1 flex flex-col items-center justify-center text-zinc-500">
+        <svg class="w-16 h-16 mb-4 text-zinc-700/50" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="1" d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z"></path></svg>
+        <h2 class="text-xl font-medium text-zinc-400">Nenhuma nota aberta</h2>
+        <p class="text-sm mt-2 text-zinc-600">Selecione um arquivo na barra lateral para começar.</p>
+      </div>
     </main>
+
   </div>
 
   <script>
-    const btnNovaNota = document.getElementById("btn-nova-nota");
-    const btnNovaPasta = document.getElementById("btn-nova-pasta");
+    // A mágica acontece aqui: Função que busca e desenha as pastas na tela
+    async function carregarPastas() {
+      const container = document.getElementById('lista-pastas');
+      if (!container) return;
 
-    btnNovaPasta?.addEventListener("click", async () => {
-      const nomePasta = prompt("Digite o nome da nova pasta:");
+      const API_URL = import.meta.env.PUBLIC_API_URL || 'http://localhost:3000';
 
-      if (nomePasta) {
-        console.log(`[Frontend] Enviando "${nomePasta}" para o backend...`);
+      try {
+        const resposta = await fetch(`${API_URL}/api/pastas`);
+        const dados = await resposta.json();
 
-        // Pega a URL do ambiente ou usa o localhost padrão
-        const API_URL =
-          import.meta.env.PUBLIC_API_URL || "http://localhost:3000";
+        if (dados.sucesso && dados.pastas.length > 0) {
+          // Limpa o aviso de "Carregando"
+          container.innerHTML = '<div class="space-y-1" id="gavetas-wrapper"></div>';
+          const wrapper = document.getElementById('gavetas-wrapper');
 
-        try {
-          const resposta = await fetch(`${API_URL}/api/pastas`, {
-            method: "POST",
-            headers: {
-              "Content-Type": "application/json",
-              // Futuramente, enviaremos o token de autenticação aqui
-              // 'Authorization': `Bearer ${localStorage.getItem('eva_token')}`
-            },
-            body: JSON.stringify({ nome: nomePasta }),
+          // Desenha cada pasta vinda do banco
+          dados.pastas.forEach(pasta => {
+            wrapper.innerHTML += `
+              <details class="group">
+                <summary class="flex items-center gap-1.5 p-1 rounded hover:bg-zinc-800/50 cursor-pointer list-none text-zinc-400 hover:text-zinc-200">
+                  <svg class="w-4 h-4 transition-transform group-open:rotate-90" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"></path></svg>
+                  ${pasta.nome}
+                </summary>
+                <div class="pl-4 ml-1.5 border-l border-zinc-800 mt-1 space-y-1 text-xs text-zinc-600 italic">
+                  Sem notas nesta pasta...
+                </div>
+              </details>
+            `;
           });
-
-          const dados = await resposta.json();
-
-          if (resposta.ok) {
-            alert(`Gaveta "${dados.pasta.nome}" criada com sucesso!`);
-            // Recarrega a página para o Astro puxar a lista atualizada do banco
-            window.location.reload();
-          } else {
-            alert(dados.mensagem || "Erro ao criar a pasta no servidor.");
-          }
-        } catch (erro) {
-          console.error("Erro:", erro);
-          alert("Falha de conexão: O servidor backend Node.js está offline.");
+        } else {
+          // Se o banco retornar vazio
+          container.innerHTML = `
+            <div class="text-center text-zinc-600 mt-10 flex flex-col items-center">
+              <svg class="w-12 h-12 mb-3 text-zinc-700" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="1" d="M3 7v10a2 2 0 002 2h14a2 2 0 002-2V9a2 2 0 00-2-2h-6l-2-2H5a2 2 0 00-2 2z"></path></svg>
+              <p>Seu cofre está vazio.</p>
+              <p class="text-xs mt-1">Crie uma nova pasta ou nota.</p>
+            </div>
+          `;
         }
-      } else if (nomePasta === "") {
-        alert("Erro! O nome da pasta não pode estar vazio.");
+      } catch (erro) {
+        console.error("Erro ao puxar pastas:", erro);
+        container.innerHTML = `<p class="text-red-500 text-center mt-5">Erro de conexão com o banco.</p>`;
       }
-    });
+    }
 
-    btnNovaNota?.addEventListener("click", async () => {
-      const nomeNota = prompt("Digite o nome da nova nota");
+    // Função de criação de pasta
+    function configurarBotoes() {
+      const btnNovaPasta = document.getElementById('btn-nova-pasta');
+      
+      // Evita duplicação de eventos com a navegação do Astro
+      if (btnNovaPasta && !btnNovaPasta.dataset.ativo) {
+        btnNovaPasta.addEventListener('click', async () => {
+          const nomePasta = prompt("Digite o nome da nova pasta:");
 
-      if (nomeNota) {
-        console.log(`[Frontend] Solicitação para criar nota: ${nomeNota}`);
-        alert(
-          `Sucesso! A nota ${nomeNota} será enviada para o banco de dados.`,
-        );
-      } else if (nomeNota === "") {
-        alert("Erro! O nome da nota não pode estar vazio.");
+          if (nomePasta) {
+            const API_URL = import.meta.env.PUBLIC_API_URL || 'http://localhost:3000';
+            try {
+              const resposta = await fetch(`${API_URL}/api/pastas`, {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ nome: nomePasta })
+              });
+
+              if (resposta.ok) {
+                // Em vez de recarregar a tela inteira com o chato reload()...
+                // Nós só chamamos a função para re-desenhar a barra lateral! Magia!
+                carregarPastas();
+              } else {
+                alert('Erro ao criar a pasta no servidor.');
+              }
+            } catch (erro) {
+              alert("O servidor backend Node.js está offline.");
+            }
+          }
+        });
+        btnNovaPasta.dataset.ativo = "1";
       }
+    }
+
+    // Faz a página desenhar tudo assim que carrega
+    document.addEventListener("astro:page-load", () => {
+      carregarPastas();
+      configurarBotoes();
     });
   </script>
 </PainelLayout>

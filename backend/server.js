@@ -5,12 +5,10 @@ const express = require("express");
 const cors = require('cors');
 
 //ativando Middleware
-const pastasRoutes = require('./routes/pastas.routes');
-const verificarToken = require('./middlewares/auth.middleware'); 
-
 // Importação dos Módulos (Routers)
 const authRoutes = require('./routes/auth.routes');
 const pastasRoutes = require('./routes/pastas.routes');
+const verificarToken = require('./middlewares/auth.middleware'); 
 
 const app = express();
 

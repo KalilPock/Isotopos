@@ -62,7 +62,7 @@ const tituloHeader = title.split(' -')[0];
         if (btnSair && !btnSair.dataset.logoutHandler) {
           btnSair.addEventListener("click", () => {
             localStorage.removeItem("eva_token");
-            window.location.href = "/";
+            window.location.href = "/login";
           });
           btnSair.dataset.logoutHandler = "1";
         }

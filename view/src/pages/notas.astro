@@ -1,73 +1,135 @@
 ---
-import PainelLayout from '../layouts/PainelLayout.astro';
+import PainelLayout from "../layouts/PainelLayout.astro";
 ---
 
 <PainelLayout title="Notas - Isótopos">
-  
-  <div class="border border-zinc-800 rounded-xl h-[calc(100vh-150px)] w-full bg-[#1e1e1e] text-zinc-300 flex overflow-hidden font-sans shadow-2xl">
-
+  <div
+    class="border border-zinc-800 rounded-xl h-[calc(100vh-150px)] w-full bg-[#1e1e1e] text-zinc-300 flex overflow-hidden font-sans shadow-2xl"
+  >
     <!-- BARRA LATERAL -->
-    <aside class="w-72 bg-[#181818] border-r border-zinc-800 flex flex-col flex-shrink-0">
-      
+    <aside
+      class="w-72 bg-[#181818] border-r border-zinc-800 flex flex-col flex-shrink-0"
+    >
       <!-- Controles -->
-      <div class="h-12 border-b border-zinc-800 flex items-center justify-between px-4 text-zinc-400">
+      <div
+        class="h-12 border-b border-zinc-800 flex items-center justify-between px-4 text-zinc-400"
+      >
         <div class="flex gap-3">
-          <button id="btn-nova-nota" class="hover:text-zinc-100 transition-colors" title="Nova nota">
-            <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 13h6m-3-3v6m5 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"></path></svg>
+          <button
+            id="btn-nova-nota"
+            class="hover:text-zinc-100 transition-colors"
+            title="Nova nota"
+          >
+            <svg
+              class="w-5 h-5"
+              fill="none"
+              stroke="currentColor"
+              viewBox="0 0 24 24"
+              ><path
+                stroke-linecap="round"
+                stroke-linejoin="round"
+                stroke-width="2"
+                d="M9 13h6m-3-3v6m5 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"
+              ></path></svg
+            >
           </button>
-          <button id="btn-nova-pasta" class="hover:text-zinc-100 transition-colors" title="Nova pasta">
-            <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 13h6m-3-3v6m-9 1V7a2 2 0 012-2h6l2 2h6a2 2 0 012 2v8a2 2 0 01-2 2H5a2 2 0 01-2-2z"></path></svg>
+          <button
+            id="btn-nova-pasta"
+            class="hover:text-zinc-100 transition-colors"
+            title="Nova pasta"
+          >
+            <svg
+              class="w-5 h-5"
+              fill="none"
+              stroke="currentColor"
+              viewBox="0 0 24 24"
+              ><path
+                stroke-linecap="round"
+                stroke-linejoin="round"
+                stroke-width="2"
+                d="M9 13h6m-3-3v6m-9 1V7a2 2 0 012-2h6l2 2h6a2 2 0 012 2v8a2 2 0 01-2 2H5a2 2 0 01-2-2z"
+              ></path></svg
+            >
           </button>
         </div>
       </div>
 
       <!-- Container onde o JavaScript vai injetar as pastas vivas -->
-      <div id="lista-pastas" class="flex-1 overflow-y-auto p-4 text-sm select-none">
+      <div
+        id="lista-pastas"
+        class="flex-1 overflow-y-auto p-4 text-sm select-none"
+      >
         <!-- Texto de carregamento inicial -->
         <div class="text-center text-zinc-600 mt-10">
           <p class="animate-pulse">Carregando cofre...</p>
         </div>
       </div>
-
     </aside>
-
     <!-- ÁREA PRINCIPAL -->
     <main class="flex-1 flex flex-col bg-[#1e1e1e]">
       <!-- Placeholder de nota vazia -->
-      <div class="flex-1 flex flex-col items-center justify-center text-zinc-500">
-        <svg class="w-16 h-16 mb-4 text-zinc-700/50" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="1" d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z"></path></svg>
+      <div
+        class="flex-1 flex flex-col items-center justify-center text-zinc-500"
+      >
+        <svg
+          class="w-16 h-16 mb-4 text-zinc-700/50"
+          fill="none"
+          stroke="currentColor"
+          viewBox="0 0 24 24"
+          ><path
+            stroke-linecap="round"
+            stroke-linejoin="round"
+            stroke-width="1"
+            d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z"
+          ></path></svg
+        >
         <h2 class="text-xl font-medium text-zinc-400">Nenhuma nota aberta</h2>
-        <p class="text-sm mt-2 text-zinc-600">Selecione um arquivo na barra lateral para começar.</p>
+        <p class="text-sm mt-2 text-zinc-600">
+          Selecione um arquivo na barra lateral para começar.
+        </p>
       </div>
     </main>
-
   </div>
 
   <script>
-    // A mágica acontece aqui: Função que busca e desenha as pastas na tela
+    // 1. Função que busca e desenha as pastas na tela
     async function carregarPastas() {
-      const container = document.getElementById('lista-pastas');
+      const container = document.getElementById("lista-pastas");
       if (!container) return;
 
-      const API_URL = import.meta.env.PUBLIC_API_URL || 'http://localhost:3000';
+      const API_URL = import.meta.env.PUBLIC_API_URL || "http://localhost:3000";
 
       try {
         const resposta = await fetch(`${API_URL}/api/pastas`);
         const dados = await resposta.json();
 
         if (dados.sucesso && dados.pastas.length > 0) {
-          // Limpa o aviso de "Carregando"
-          container.innerHTML = '<div class="space-y-1" id="gavetas-wrapper"></div>';
-          const wrapper = document.getElementById('gavetas-wrapper');
+          container.innerHTML =
+            '<div class="space-y-1" id="gavetas-wrapper"></div>';
+          const wrapper = document.getElementById("gavetas-wrapper");
 
-          // Desenha cada pasta vinda do banco
-          dados.pastas.forEach(pasta => {
+          dados.pastas.forEach((pasta) => {
             wrapper.innerHTML += `
-              <details class="group">
-                <summary class="flex items-center gap-1.5 p-1 rounded hover:bg-zinc-800/50 cursor-pointer list-none text-zinc-400 hover:text-zinc-200">
-                  <svg class="w-4 h-4 transition-transform group-open:rotate-90" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"></path></svg>
-                  ${pasta.nome}
+              <details class="group relative">
+                <summary class="flex items-center justify-between p-1.5 rounded hover:bg-zinc-800/50 cursor-pointer list-none text-zinc-400 hover:text-zinc-200 transition-colors">
+                  
+                  <div class="flex items-center gap-1.5">
+                    <svg class="w-4 h-4 transition-transform group-open:rotate-90" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"></path></svg>
+                    <span class="truncate max-w-[130px]" title="${pasta.nome}">${pasta.nome}</span>
+                  </div>
+
+                  <div class="hidden group-hover:flex items-center gap-1 pr-1">
+                    <button data-id="${pasta.id}" data-nome="${pasta.nome}" class="btn-editar-pasta p-1 hover:text-blue-400 transition-colors" title="Renomear">
+                      <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15.232 5.232l3.536 3.536m-2.036-5.036a2.5 2.5 0 113.536 3.536L6.5 21.036H3v-3.572L16.732 3.732z"></path></svg>
+                    </button>
+                    
+                    <button data-id="${pasta.id}" class="btn-deletar-pasta p-1 hover:text-red-500 transition-colors" title="Excluir">
+                      <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16"></path></svg>
+                    </button>
+                  </div>
+
                 </summary>
+                
                 <div class="pl-4 ml-1.5 border-l border-zinc-800 mt-1 space-y-1 text-xs text-zinc-600 italic">
                   Sem notas nesta pasta...
                 </div>
@@ -75,7 +137,6 @@ import PainelLayout from '../layouts/PainelLayout.astro';
             `;
           });
         } else {
-          // Se o banco retornar vazio
           container.innerHTML = `
             <div class="text-center text-zinc-600 mt-10 flex flex-col items-center">
               <svg class="w-12 h-12 mb-3 text-zinc-700" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="1" d="M3 7v10a2 2 0 002 2h14a2 2 0 002-2V9a2 2 0 00-2-2h-6l-2-2H5a2 2 0 00-2 2z"></path></svg>
@@ -90,30 +151,28 @@ import PainelLayout from '../layouts/PainelLayout.astro';
       }
     }
 
-    // Função de criação de pasta
+    // 2. Função de criação de pasta
     function configurarBotoes() {
-      const btnNovaPasta = document.getElementById('btn-nova-pasta');
-      
-      // Evita duplicação de eventos com a navegação do Astro
+      const btnNovaPasta = document.getElementById("btn-nova-pasta");
+
       if (btnNovaPasta && !btnNovaPasta.dataset.ativo) {
-        btnNovaPasta.addEventListener('click', async () => {
+        btnNovaPasta.addEventListener("click", async () => {
           const nomePasta = prompt("Digite o nome da nova pasta:");
 
           if (nomePasta) {
-            const API_URL = import.meta.env.PUBLIC_API_URL || 'http://localhost:3000';
+            const API_URL =
+              import.meta.env.PUBLIC_API_URL || "http://localhost:3000";
             try {
               const resposta = await fetch(`${API_URL}/api/pastas`, {
-                method: 'POST',
-                headers: { 'Content-Type': 'application/json' },
-                body: JSON.stringify({ nome: nomePasta })
+                method: "POST",
+                headers: { "Content-Type": "application/json" },
+                body: JSON.stringify({ nome: nomePasta }),
               });
 
               if (resposta.ok) {
-                // Em vez de recarregar a tela inteira com o chato reload()...
-                // Nós só chamamos a função para re-desenhar a barra lateral! Magia!
                 carregarPastas();
               } else {
-                alert('Erro ao criar a pasta no servidor.');
+                alert("Erro ao criar a pasta no servidor.");
               }
             } catch (erro) {
               alert("O servidor backend Node.js está offline.");
@@ -124,10 +183,89 @@ import PainelLayout from '../layouts/PainelLayout.astro';
       }
     }
 
-    // Faz a página desenhar tudo assim que carrega
+    // 3. A NOVA MÁGICA: Delegação de eventos para Editar e Deletar
+    function configurarAcoesPastas() {
+      const listaPastas = document.getElementById("lista-pastas");
+
+      if (listaPastas && !listaPastas.dataset.ativoAcoes) {
+        listaPastas.addEventListener("click", async (evento) => {
+          // O .closest() verifica se o clique foi no botão ou dentro do SVG do botão
+          const btnDeletar = (evento.target as Element).closest(
+            ".btn-deletar-pasta",
+          ) as HTMLElement;
+          const btnEditar = (evento.target as Element).closest(
+            ".btn-editar-pasta",
+          ) as HTMLElement;
+
+          const API_URL =
+            import.meta.env.PUBLIC_API_URL || "http://localhost:3000";
+
+          // --- AÇÃO: DELETAR ---
+          if (btnDeletar) {
+            evento.preventDefault(); // Impede a gaveta <details> de abrir ao clicar no botão
+            const idPasta = btnDeletar.dataset.id;
+
+            if (
+              confirm(
+                "Tem certeza que deseja excluir esta pasta e todas as notas dentro dela?",
+              )
+            ) {
+              try {
+                const resposta = await fetch(
+                  `${API_URL}/api/pastas/${idPasta}`,
+                  { method: "DELETE" },
+                );
+                if (resposta.ok) {
+                  carregarPastas(); // Recarrega a barra lateral silenciosamente
+                } else {
+                  alert("Erro ao deletar a pasta.");
+                }
+              } catch (erro) {
+                alert("Servidor offline.");
+              }
+            }
+          }
+
+          // --- AÇÃO: EDITAR ---
+          if (btnEditar) {
+            evento.preventDefault();
+            const idPasta = btnEditar.dataset.id;
+            const nomeAtual = btnEditar.dataset.nome;
+
+            const novoNome = prompt("Renomear pasta:", nomeAtual);
+
+            if (novoNome && novoNome.trim() !== "" && novoNome !== nomeAtual) {
+              try {
+                const resposta = await fetch(
+                  `${API_URL}/api/pastas/${idPasta}`,
+                  {
+                    method: "PUT",
+                    headers: { "Content-Type": "application/json" },
+                    body: JSON.stringify({ nome: novoNome }),
+                  },
+                );
+
+                if (resposta.ok) {
+                  carregarPastas();
+                } else {
+                  alert("Erro ao renomear a pasta.");
+                }
+              } catch (erro) {
+                alert("Servidor offline.");
+              }
+            }
+          }
+        });
+
+        listaPastas.dataset.ativoAcoes = "1";
+      }
+    }
+
+    // 4. Inicia tudo quando a página carrega
     document.addEventListener("astro:page-load", () => {
       carregarPastas();
       configurarBotoes();
+      configurarAcoesPastas(); // Inicializa os ouvintes de clique
     });
   </script>
 </PainelLayout>

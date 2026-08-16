@@ -20,6 +20,8 @@ app.get("/api/status", (req, res) => {
   res.json({ status: "online", mensagem: "Servidor Isótopos ativo!" });
 });
 
+//ativando rotas
+app.use('/api', authRoutes);
 app.use('/api/pastas', verificarToken, pastasRoutes);
 
 // Tratamento de Rota 404

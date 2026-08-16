@@ -7,13 +7,16 @@ import Layout from "../layouts/Layout.astro";
   <main class="w-full h-screen flex justify-center items-center p-6">
     <form
       id="form-login"
+      method="POST"
+      action=""
       class="w-full max-w-[420px] bg-zinc-900 border border-eva-purple/40 rounded-2xl p-8 sm:px-7 shadow-2xl shadow-eva-purple/10"
     >
       <!-- Título em verde neon -->
       <h1 class="text-center text-3xl mb-6 font-bold text-eva-green">Login</h1>
 
       <div class="flex flex-col gap-2 mb-5">
-        <label class="font-semibold text-slate-300" for="usuario">Usuário</label>
+        <label class="font-semibold text-slate-300" for="usuario">Usuário</label
+        >
         <!-- Foco do input muda para a cor verde do Evangelion -->
         <input
           class="w-full p-3 border border-zinc-700 rounded-lg bg-zinc-800 text-slate-200 outline-none transition-all duration-200 placeholder:text-zinc-500 focus:border-eva-green focus:ring-[3px] focus:ring-eva-green/20"
@@ -56,30 +59,39 @@ import Layout from "../layouts/Layout.astro";
   </main>
 
   <script>
+  // Esta função garante que o script só roda quando o Astro terminar de desenhar a tela
+  document.addEventListener("astro:page-load", () => {
     const form = document.getElementById("form-login");
 
     form?.addEventListener("submit", async (evento) => {
+      // ISSO AQUI CANCELA O ENVIO PELA URL! Tem que ser a primeira linha.
       evento.preventDefault();
 
-      const usuario = (document.getElementById("usuario") as HTMLInputElement).value;
-      const senha = (document.getElementById("senha") as HTMLInputElement).value;
+      const usuarioInput = document.getElementById("usuario") as HTMLInputElement;
+      const senhaInput = document.getElementById("senha") as HTMLInputElement;
+
+      // Validação rápida para evitar enviar campos vazios
+      if (!usuarioInput.value || !senhaInput.value) {
+        alert("Preencha todos os campos!");
+        return;
+      }
 
       const API_URL = import.meta.env.PUBLIC_API_URL || "http://localhost:3000";
 
       try {
         const resposta = await fetch(`${API_URL}/api/login`, {
-          method: "POST",
+          method: "POST", // Aqui a senha vai escondida no corpo (Body)
           headers: { "Content-Type": "application/json" },
-          body: JSON.stringify({ usuario, senha }),
+          body: JSON.stringify({ 
+            usuario: usuarioInput.value, 
+            senha: senhaInput.value 
+          }),
         });
 
         const dados = await resposta.json();
 
         if (resposta.ok) {
-          // Salva o token no navegador
           localStorage.setItem("eva_token", dados.token);
-
-          // Redireciona para o painel
           window.location.href = "/painel";
         } else {
           alert(dados.mensagem || "Erro ao fazer login");
@@ -89,5 +101,6 @@ import Layout from "../layouts/Layout.astro";
         alert("O servidor backend está offline.");
       }
     });
-  </script>
+  });
+</script>
 </Layout>

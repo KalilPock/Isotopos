@@ -92,15 +92,35 @@ import PainelLayout from "../layouts/PainelLayout.astro";
   </div>
 
   <script>
+    // Função utilitária para pegar o token e barrar intrusos
+    function obterToken() {
+      const token = localStorage.getItem("eva_token");
+      if (!token) {
+        alert("Sessão expirada ou não autenticada. Faça login novamente.");
+        window.location.href = "/"; // Redireciona para o Login
+        return null;
+      }
+      return token;
+    }
+
     // 1. Função que busca e desenha as pastas na tela
     async function carregarPastas() {
       const container = document.getElementById("lista-pastas");
       if (!container) return;
 
+      const token = obterToken();
+      if (!token) return;
+
       const API_URL = import.meta.env.PUBLIC_API_URL || "http://localhost:3000";
 
       try {
-        const resposta = await fetch(`${API_URL}/api/pastas`);
+        // ENVIANDO O CRACHÁ NO CABEÇALHO (HEADERS)
+        const resposta = await fetch(`${API_URL}/api/pastas`, {
+          headers: {
+            Authorization: `Bearer ${token}`,
+          },
+        });
+
         const dados = await resposta.json();
 
         if (dados.sucesso && dados.pastas.length > 0) {
@@ -112,24 +132,19 @@ import PainelLayout from "../layouts/PainelLayout.astro";
             wrapper.innerHTML += `
               <details class="group relative">
                 <summary class="flex items-center justify-between p-1.5 rounded hover:bg-zinc-800/50 cursor-pointer list-none text-zinc-400 hover:text-zinc-200 transition-colors">
-                  
                   <div class="flex items-center gap-1.5">
                     <svg class="w-4 h-4 transition-transform group-open:rotate-90" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"></path></svg>
                     <span class="truncate max-w-[130px]" title="${pasta.nome}">${pasta.nome}</span>
                   </div>
-
                   <div class="hidden group-hover:flex items-center gap-1 pr-1">
                     <button data-id="${pasta.id}" data-nome="${pasta.nome}" class="btn-editar-pasta p-1 hover:text-blue-400 transition-colors" title="Renomear">
                       <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15.232 5.232l3.536 3.536m-2.036-5.036a2.5 2.5 0 113.536 3.536L6.5 21.036H3v-3.572L16.732 3.732z"></path></svg>
                     </button>
-                    
                     <button data-id="${pasta.id}" class="btn-deletar-pasta p-1 hover:text-red-500 transition-colors" title="Excluir">
                       <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16"></path></svg>
                     </button>
                   </div>
-
                 </summary>
-                
                 <div class="pl-4 ml-1.5 border-l border-zinc-800 mt-1 space-y-1 text-xs text-zinc-600 italic">
                   Sem notas nesta pasta...
                 </div>
@@ -158,14 +173,18 @@ import PainelLayout from "../layouts/PainelLayout.astro";
       if (btnNovaPasta && !btnNovaPasta.dataset.ativo) {
         btnNovaPasta.addEventListener("click", async () => {
           const nomePasta = prompt("Digite o nome da nova pasta:");
+          const token = obterToken();
 
-          if (nomePasta) {
+          if (nomePasta && token) {
             const API_URL =
               import.meta.env.PUBLIC_API_URL || "http://localhost:3000";
             try {
               const resposta = await fetch(`${API_URL}/api/pastas`, {
                 method: "POST",
-                headers: { "Content-Type": "application/json" },
+                headers: {
+                  "Content-Type": "application/json",
+                  Authorization: `Bearer ${token}`, // CRACHÁ AQUI TAMBÉM
+                },
                 body: JSON.stringify({ nome: nomePasta }),
               });
 
@@ -183,13 +202,12 @@ import PainelLayout from "../layouts/PainelLayout.astro";
       }
     }
 
-    // 3. A NOVA MÁGICA: Delegação de eventos para Editar e Deletar
+    // 3. Delegação de eventos para Editar e Deletar
     function configurarAcoesPastas() {
       const listaPastas = document.getElementById("lista-pastas");
 
       if (listaPastas && !listaPastas.dataset.ativoAcoes) {
         listaPastas.addEventListener("click", async (evento) => {
-          // O .closest() verifica se o clique foi no botão ou dentro do SVG do botão
           const btnDeletar = (evento.target as Element).closest(
             ".btn-deletar-pasta",
           ) as HTMLElement;
@@ -199,10 +217,12 @@ import PainelLayout from "../layouts/PainelLayout.astro";
 
           const API_URL =
             import.meta.env.PUBLIC_API_URL || "http://localhost:3000";
+          const token = obterToken();
+          if (!token) return;
 
-          // --- AÇÃO: DELETAR ---
+          // --- DELETAR ---
           if (btnDeletar) {
-            evento.preventDefault(); // Impede a gaveta <details> de abrir ao clicar no botão
+            evento.preventDefault();
             const idPasta = btnDeletar.dataset.id;
 
             if (
@@ -213,25 +233,24 @@ import PainelLayout from "../layouts/PainelLayout.astro";
               try {
                 const resposta = await fetch(
                   `${API_URL}/api/pastas/${idPasta}`,
-                  { method: "DELETE" },
+                  {
+                    method: "DELETE",
+                    headers: { Authorization: `Bearer ${token}` }, // CRACHÁ
+                  },
                 );
-                if (resposta.ok) {
-                  carregarPastas(); // Recarrega a barra lateral silenciosamente
-                } else {
-                  alert("Erro ao deletar a pasta.");
-                }
+                if (resposta.ok) carregarPastas();
+                else alert("Erro ao deletar a pasta.");
               } catch (erro) {
                 alert("Servidor offline.");
               }
             }
           }
 
-          // --- AÇÃO: EDITAR ---
+          // --- EDITAR ---
           if (btnEditar) {
             evento.preventDefault();
             const idPasta = btnEditar.dataset.id;
             const nomeAtual = btnEditar.dataset.nome;
-
             const novoNome = prompt("Renomear pasta:", nomeAtual);
 
             if (novoNome && novoNome.trim() !== "" && novoNome !== nomeAtual) {
@@ -240,32 +259,34 @@ import PainelLayout from "../layouts/PainelLayout.astro";
                   `${API_URL}/api/pastas/${idPasta}`,
                   {
                     method: "PUT",
-                    headers: { "Content-Type": "application/json" },
+                    headers: {
+                      "Content-Type": "application/json",
+                      Authorization: `Bearer ${token}`, // CRACHÁ
+                    },
                     body: JSON.stringify({ nome: novoNome }),
                   },
                 );
 
-                if (resposta.ok) {
-                  carregarPastas();
-                } else {
-                  alert("Erro ao renomear a pasta.");
-                }
+                if (resposta.ok) carregarPastas();
+                else alert("Erro ao renomear a pasta.");
               } catch (erro) {
                 alert("Servidor offline.");
               }
             }
           }
         });
-
         listaPastas.dataset.ativoAcoes = "1";
       }
     }
 
-    // 4. Inicia tudo quando a página carrega
+    // 4. Inicia tudo
     document.addEventListener("astro:page-load", () => {
-      carregarPastas();
-      configurarBotoes();
-      configurarAcoesPastas(); // Inicializa os ouvintes de clique
+      // Executa um teste silencioso para ver se o token existe antes de carregar o resto
+      if (obterToken()) {
+        carregarPastas();
+        configurarBotoes();
+        configurarAcoesPastas();
+      }
     });
   </script>
 </PainelLayout>

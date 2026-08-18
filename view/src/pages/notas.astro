@@ -166,9 +166,41 @@ import PainelLayout from "../layouts/PainelLayout.astro";
       }
     }
 
-    // 2. Função de criação de pasta
+    // 2. Função de criação de pasta e nota
     function configurarBotoes() {
+      const btnNovaNota = document.getElementById("btn-nova-nota");
       const btnNovaPasta = document.getElementById("btn-nova-pasta");
+
+      if(btnNovaNota && !btnNovaNota.dataset.ativo){
+        btnNovaNota.addEventListener("click",async ()=>{
+          const nomeNota = prompt("Digite o nome da nova nota:")
+          const token = obterToken();
+
+          if(nomeNota && token){
+            const API_URL = 
+              import.meta.env.PUBLIC_API_URL || "http://localhost:3000";
+            try{
+              const resposta = await fetch(`${API_URL}/api/pastas`,{
+                method: "POST",
+                headers:{
+                  "Content-Type": "application/json",
+                  Authorization: `Bearer ${token}`,
+                },body: JSON.stringify({nome: nomeNota}),
+              });
+
+              if(resposta.ok){
+                carregarNotas();
+              }else{
+                alert("Erro ao criar a nota no servidor")
+              }
+            }catch(erro){
+                alert("O servidor backend Node.js está offline.");
+
+            }
+          }
+          
+        })
+      }
 
       if (btnNovaPasta && !btnNovaPasta.dataset.ativo) {
         btnNovaPasta.addEventListener("click", async () => {

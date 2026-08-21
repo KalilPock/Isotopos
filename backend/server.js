@@ -7,6 +7,7 @@ const cors = require('cors');
 //ativando Middleware
 // Importação dos Módulos (Routers)
 const authRoutes = require('./routes/auth.routes');
+const notasRoutes = require('./routes/notas.routes');
 const pastasRoutes = require('./routes/pastas.routes');
 const verificarToken = require('./middlewares/auth.middleware'); 
 
@@ -14,6 +15,7 @@ const app = express();
 
 app.use(cors());
 app.use(express.json());
+app.use('/api/notas', verificarToken, notasRoutes); // 
 
 // Rota de Status (Deixamos direto aqui para verificações rápidas de integridade do Render)
 app.get("/api/status", (req, res) => {

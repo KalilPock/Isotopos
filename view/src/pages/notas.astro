@@ -1,5 +1,5 @@
 <script>
-    // NOVO: Variável global que vai lembrar qual pasta o usuário clicou por último
+    // Variável global: lembrar qual pasta o usuário clicou por último
     let pastaAtivaId = null;
 
     function obterToken() {
@@ -12,7 +12,7 @@
       return token;
     }
 
-    // 1. Função que busca e desenha as pastas na tela
+    //busca e desenha as pastas na tela
     async function carregarPastas() {
       const container = document.getElementById("lista-pastas");
       if (!container) return;
@@ -36,7 +36,7 @@
           dados.pastas.forEach((pasta) => {
             wrapper.innerHTML += `
               <details class="group relative">
-                <!-- NOVO: Adicionado 'data-id' e classe 'pasta-item' no summary para podermos identificar o clique -->
+                <!-- Adicionado 'data-id' e classe 'pasta-item' no summary para podermos identificar o clique -->
                 <summary data-id="${pasta.id}" class="pasta-item flex items-center justify-between p-1.5 rounded hover:bg-zinc-800/50 cursor-pointer list-none text-zinc-400 transition-colors">
                   <div class="flex items-center gap-1.5 pointer-events-none">
                     <svg class="w-4 h-4 transition-transform group-open:rotate-90" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"></path></svg>
@@ -60,7 +60,7 @@
             `;
           });
         } else {
-          // ... (mantido o seu fallback vazio)
+          // ... (mantido o fallback vazio)
           container.innerHTML = `
             <div class="text-center text-zinc-600 mt-10 flex flex-col items-center">
               <svg class="w-12 h-12 mb-3 text-zinc-700" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="1" d="M3 7v10a2 2 0 002 2h14a2 2 0 002-2V9a2 2 0 00-2-2h-6l-2-2H5a2 2 0 00-2 2z"></path></svg>
@@ -74,7 +74,7 @@
       }
     }
 
-    // 2. Função de criação
+    // Função de criação
     function configurarBotoes() {
       const btnNovaNota = document.getElementById("btn-nova-nota");
       const btnNovaPasta = document.getElementById("btn-nova-pasta");
@@ -82,7 +82,7 @@
       // --- CRIAR NOVA NOTA ---
       if(btnNovaNota && !btnNovaNota.dataset.ativo){
         btnNovaNota.addEventListener("click", async () => {
-          // NOVO: Verifica se o usuário clicou em alguma pasta antes
+          //Verifica se o usuário clicou em alguma pasta antes
           if (!pastaAtivaId) {
             alert("Por favor, selecione uma pasta clicando nela antes de criar uma nota.");
             return;
@@ -94,14 +94,14 @@
           if(nomeNota && token){
             const API_URL = import.meta.env.PUBLIC_API_URL || "http://localhost:3000";
             try{
-              // NOVO: Rota alterada para /api/notas
+              // Rota alterada para /api/notas
               const resposta = await fetch(`${API_URL}/api/notas`, {
                 method: "POST",
                 headers: {
                   "Content-Type": "application/json",
                   Authorization: `Bearer ${token}`,
                 },
-                // NOVO: Enviando o título E a chave estrangeira (pasta_id)
+                // Enviando o título E a chave estrangeira (pasta_id)
                 body: JSON.stringify({ 
                   titulo: nomeNota, 
                   pasta_id: pastaAtivaId 
@@ -109,7 +109,7 @@
               });
 
               if(resposta.ok){
-                // carregarNotas(pastaAtivaId); // NOVO: Deixei comentado pois faremos essa função depois!
+                // carregarNotas(pastaAtivaId); //função será implementada depois!
                 alert("Nota registrada! O recarregamento será programado em breve.");
               } else {
                 alert("Erro ao criar a nota no servidor.");
@@ -122,7 +122,6 @@
         btnNovaNota.dataset.ativo = "1";
       }
 
-      // --- CRIAR NOVA PASTA (Seu código mantido 100% igual) ---
       if (btnNovaPasta && !btnNovaPasta.dataset.ativo) {
         btnNovaPasta.addEventListener("click", async () => {
           const nomePasta = prompt("Digite o nome da nova pasta:");
@@ -160,14 +159,13 @@
           const btnDeletar = (evento.target as Element).closest(".btn-deletar-pasta") as HTMLElement;
           const btnEditar = (evento.target as Element).closest(".btn-editar-pasta") as HTMLElement;
           
-          // NOVO: Captura o clique na pasta em si (o botão inteiro)
+          // Captura o clique na pasta em si (o botão inteiro)
           const areaDaPasta = (evento.target as Element).closest(".pasta-item") as HTMLElement;
 
           const API_URL = import.meta.env.PUBLIC_API_URL || "http://localhost:3000";
           const token = obterToken();
           if (!token) return;
 
-          // --- DELETAR PASTA ---
           if (btnDeletar) {
             evento.preventDefault();
             const idPasta = btnDeletar.dataset.id;
@@ -208,7 +206,7 @@
             return; // Interrompe
           }
 
-          // NOVO: SE NÃO CLICOU EM EDITAR NEM DELETAR, ENTÃO CLICOU NA PASTA!
+          // SE NÃO CLICOU EM EDITAR NEM DELETAR, ENTÃO CLICOU NA PASTA!
           if (areaDaPasta) {
             pastaAtivaId = areaDaPasta.dataset.id;
             
@@ -221,7 +219,7 @@
             areaDaPasta.classList.add('text-zinc-100', 'bg-zinc-800/80');
 
             console.log("Pasta ativa agora é a de ID:", pastaAtivaId);
-            // Aqui chamaremos a função carregarNotas(pastaAtivaId) no futuro
+            // futuramente a função carregarNotas(pastaAtivaId) 
           }
         });
         listaPastas.dataset.ativoAcoes = "1";

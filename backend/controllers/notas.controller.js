@@ -21,11 +21,26 @@ exports.criarNota = async (req, res) => {
     return res.status(500).json({ sucesso: false, mensagem: error.message });
   }
 
-  res.status(200).json({ sucesso: true, nota: data[0] });
+  res.status(201).json({ sucesso: true, nota: data[0] });
 };
-//listar todas notas de uma pasta especifica
 
-exports.atualizaNota = async (req, res) => {
+// A FUNÇÃO QUE ESTAVA FALTANDO!
+exports.listarNotasDaPasta = async (req, res) => {
+  const { pasta_id } = req.params;
+
+  const { data, error } = await supabase
+    .from('notas')
+    .select('*')
+    .eq('pasta_id', pasta_id)
+    .order('criado_em', { ascending: false }); 
+  
+  if (error) return res.status(500).json({ sucesso: false, mensagem: error.message });
+  
+  res.status(200).json({ sucesso: true, notas: data });
+};
+
+// CORRIGIDO: Adicionado o "r" no nome (atualizarNota)
+exports.atualizarNota = async (req, res) => {
   const { id } = req.params;
   const { titulo, conteudo } = req.body;
 

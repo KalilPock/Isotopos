@@ -1,103 +1,12 @@
----
-import PainelLayout from "../layouts/PainelLayout.astro";
----
+<script>
+    // NOVO: Variável global que vai lembrar qual pasta o usuário clicou por último
+    let pastaAtivaId = null;
 
-<PainelLayout title="Notas - Isótopos">
-  <div
-    class="border border-zinc-800 rounded-xl h-[calc(100vh-150px)] w-full bg-[#1e1e1e] text-zinc-300 flex overflow-hidden font-sans shadow-2xl"
-  >
-    <!-- BARRA LATERAL -->
-    <aside
-      class="w-72 bg-[#181818] border-r border-zinc-800 flex flex-col flex-shrink-0"
-    >
-      <!-- Controles -->
-      <div
-        class="h-12 border-b border-zinc-800 flex items-center justify-between px-4 text-zinc-400"
-      >
-        <div class="flex gap-3">
-          <button
-            id="btn-nova-nota"
-            class="hover:text-zinc-100 transition-colors"
-            title="Nova nota"
-          >
-            <svg
-              class="w-5 h-5"
-              fill="none"
-              stroke="currentColor"
-              viewBox="0 0 24 24"
-              ><path
-                stroke-linecap="round"
-                stroke-linejoin="round"
-                stroke-width="2"
-                d="M9 13h6m-3-3v6m5 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"
-              ></path></svg
-            >
-          </button>
-          <button
-            id="btn-nova-pasta"
-            class="hover:text-zinc-100 transition-colors"
-            title="Nova pasta"
-          >
-            <svg
-              class="w-5 h-5"
-              fill="none"
-              stroke="currentColor"
-              viewBox="0 0 24 24"
-              ><path
-                stroke-linecap="round"
-                stroke-linejoin="round"
-                stroke-width="2"
-                d="M9 13h6m-3-3v6m-9 1V7a2 2 0 012-2h6l2 2h6a2 2 0 012 2v8a2 2 0 01-2 2H5a2 2 0 01-2-2z"
-              ></path></svg
-            >
-          </button>
-        </div>
-      </div>
-
-      <!-- Container onde o JavaScript vai injetar as pastas vivas -->
-      <div
-        id="lista-pastas"
-        class="flex-1 overflow-y-auto p-4 text-sm select-none"
-      >
-        <!-- Texto de carregamento inicial -->
-        <div class="text-center text-zinc-600 mt-10">
-          <p class="animate-pulse">Carregando cofre...</p>
-        </div>
-      </div>
-    </aside>
-    <!-- ÁREA PRINCIPAL -->
-    <main class="flex-1 flex flex-col bg-[#1e1e1e]">
-      <!-- Placeholder de nota vazia -->
-      <div
-        class="flex-1 flex flex-col items-center justify-center text-zinc-500"
-      >
-        <svg
-          class="w-16 h-16 mb-4 text-zinc-700/50"
-          fill="none"
-          stroke="currentColor"
-          viewBox="0 0 24 24"
-          ><path
-            stroke-linecap="round"
-            stroke-linejoin="round"
-            stroke-width="1"
-            d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z"
-          ></path></svg
-        >
-        <h2 class="text-xl font-medium text-zinc-400">Nenhuma nota aberta</h2>
-        <p class="text-sm mt-2 text-zinc-600">
-          Selecione um arquivo na barra lateral para começar.
-        </p>
-      </div>
-    </main>
-  </div>
-
-  <script>
-    // Função utilitária para pegar o token e barrar intrusos
     function obterToken() {
       const token = localStorage.getItem("eva_token");
       if (!token) {
         alert("Sessão expirada ou não autenticada. Faça login novamente.");
-        window.location.href = "/"; // Redireciona para o Login
+        window.location.href = "/"; 
         return null;
       }
       return token;
@@ -114,37 +23,36 @@ import PainelLayout from "../layouts/PainelLayout.astro";
       const API_URL = import.meta.env.PUBLIC_API_URL || "http://localhost:3000";
 
       try {
-        // ENVIANDO O CRACHÁ NO CABEÇALHO (HEADERS)
         const resposta = await fetch(`${API_URL}/api/pastas`, {
-          headers: {
-            Authorization: `Bearer ${token}`,
-          },
+          headers: { Authorization: `Bearer ${token}` },
         });
 
         const dados = await resposta.json();
 
         if (dados.sucesso && dados.pastas.length > 0) {
-          container.innerHTML =
-            '<div class="space-y-1" id="gavetas-wrapper"></div>';
+          container.innerHTML = '<div class="space-y-1" id="gavetas-wrapper"></div>';
           const wrapper = document.getElementById("gavetas-wrapper");
 
           dados.pastas.forEach((pasta) => {
             wrapper.innerHTML += `
               <details class="group relative">
-                <summary class="flex items-center justify-between p-1.5 rounded hover:bg-zinc-800/50 cursor-pointer list-none text-zinc-400 hover:text-zinc-200 transition-colors">
-                  <div class="flex items-center gap-1.5">
+                <!-- NOVO: Adicionado 'data-id' e classe 'pasta-item' no summary para podermos identificar o clique -->
+                <summary data-id="${pasta.id}" class="pasta-item flex items-center justify-between p-1.5 rounded hover:bg-zinc-800/50 cursor-pointer list-none text-zinc-400 transition-colors">
+                  <div class="flex items-center gap-1.5 pointer-events-none">
                     <svg class="w-4 h-4 transition-transform group-open:rotate-90" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"></path></svg>
                     <span class="truncate max-w-[130px]" title="${pasta.nome}">${pasta.nome}</span>
                   </div>
                   <div class="hidden group-hover:flex items-center gap-1 pr-1">
                     <button data-id="${pasta.id}" data-nome="${pasta.nome}" class="btn-editar-pasta p-1 hover:text-blue-400 transition-colors" title="Renomear">
-                      <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15.232 5.232l3.536 3.536m-2.036-5.036a2.5 2.5 0 113.536 3.536L6.5 21.036H3v-3.572L16.732 3.732z"></path></svg>
+                      <svg class="w-3.5 h-3.5 pointer-events-none" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15.232 5.232l3.536 3.536m-2.036-5.036a2.5 2.5 0 113.536 3.536L6.5 21.036H3v-3.572L16.732 3.732z"></path></svg>
                     </button>
                     <button data-id="${pasta.id}" class="btn-deletar-pasta p-1 hover:text-red-500 transition-colors" title="Excluir">
-                      <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16"></path></svg>
+                      <svg class="w-3.5 h-3.5 pointer-events-none" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16"></path></svg>
                     </button>
                   </div>
                 </summary>
+                
+                <!-- Aqui no futuro as notas dessa pasta serão injetadas -->
                 <div class="pl-4 ml-1.5 border-l border-zinc-800 mt-1 space-y-1 text-xs text-zinc-600 italic">
                   Sem notas nesta pasta...
                 </div>
@@ -152,6 +60,7 @@ import PainelLayout from "../layouts/PainelLayout.astro";
             `;
           });
         } else {
+          // ... (mantido o seu fallback vazio)
           container.innerHTML = `
             <div class="text-center text-zinc-600 mt-10 flex flex-col items-center">
               <svg class="w-12 h-12 mb-3 text-zinc-700" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="1" d="M3 7v10a2 2 0 002 2h14a2 2 0 002-2V9a2 2 0 00-2-2h-6l-2-2H5a2 2 0 00-2 2z"></path></svg>
@@ -161,70 +70,78 @@ import PainelLayout from "../layouts/PainelLayout.astro";
           `;
         }
       } catch (erro) {
-        console.error("Erro ao puxar pastas:", erro);
         container.innerHTML = `<p class="text-red-500 text-center mt-5">Erro de conexão com o banco.</p>`;
       }
     }
 
-    // 2. Função de criação de pasta e nota
+    // 2. Função de criação
     function configurarBotoes() {
       const btnNovaNota = document.getElementById("btn-nova-nota");
       const btnNovaPasta = document.getElementById("btn-nova-pasta");
 
+      // --- CRIAR NOVA NOTA ---
       if(btnNovaNota && !btnNovaNota.dataset.ativo){
-        btnNovaNota.addEventListener("click",async ()=>{
-          const nomeNota = prompt("Digite o nome da nova nota:")
+        btnNovaNota.addEventListener("click", async () => {
+          // NOVO: Verifica se o usuário clicou em alguma pasta antes
+          if (!pastaAtivaId) {
+            alert("Por favor, selecione uma pasta clicando nela antes de criar uma nota.");
+            return;
+          }
+
+          const nomeNota = prompt("Digite o nome da nova nota:");
           const token = obterToken();
 
           if(nomeNota && token){
-            const API_URL = 
-              import.meta.env.PUBLIC_API_URL || "http://localhost:3000";
+            const API_URL = import.meta.env.PUBLIC_API_URL || "http://localhost:3000";
             try{
-              const resposta = await fetch(`${API_URL}/api/pastas`,{
+              // NOVO: Rota alterada para /api/notas
+              const resposta = await fetch(`${API_URL}/api/notas`, {
                 method: "POST",
-                headers:{
+                headers: {
                   "Content-Type": "application/json",
                   Authorization: `Bearer ${token}`,
-                },body: JSON.stringify({nome: nomeNota}),
+                },
+                // NOVO: Enviando o título E a chave estrangeira (pasta_id)
+                body: JSON.stringify({ 
+                  titulo: nomeNota, 
+                  pasta_id: pastaAtivaId 
+                }),
               });
 
               if(resposta.ok){
-                carregarNotas();
-              }else{
-                alert("Erro ao criar a nota no servidor")
+                // carregarNotas(pastaAtivaId); // NOVO: Deixei comentado pois faremos essa função depois!
+                alert("Nota registrada! O recarregamento será programado em breve.");
+              } else {
+                alert("Erro ao criar a nota no servidor.");
               }
-            }catch(erro){
-                alert("O servidor backend Node.js está offline.");
-
+            } catch(erro) {
+              alert("O servidor backend Node.js está offline.");
             }
           }
-          
-        })
+        });
+        btnNovaNota.dataset.ativo = "1";
       }
 
+      // --- CRIAR NOVA PASTA (Seu código mantido 100% igual) ---
       if (btnNovaPasta && !btnNovaPasta.dataset.ativo) {
         btnNovaPasta.addEventListener("click", async () => {
           const nomePasta = prompt("Digite o nome da nova pasta:");
           const token = obterToken();
 
           if (nomePasta && token) {
-            const API_URL =
-              import.meta.env.PUBLIC_API_URL || "http://localhost:3000";
+            const API_URL = import.meta.env.PUBLIC_API_URL || "http://localhost:3000";
             try {
               const resposta = await fetch(`${API_URL}/api/pastas`, {
                 method: "POST",
                 headers: {
                   "Content-Type": "application/json",
-                  Authorization: `Bearer ${token}`, // CRACHÁ AQUI TAMBÉM
+                  Authorization: `Bearer ${token}`, 
                 },
                 body: JSON.stringify({ nome: nomePasta }),
               });
 
-              if (resposta.ok) {
-                carregarPastas();
-              } else {
-                alert("Erro ao criar a pasta no servidor.");
-              }
+              if (resposta.ok) carregarPastas();
+              else alert("Erro ao criar a pasta no servidor.");
             } catch (erro) {
               alert("O servidor backend Node.js está offline.");
             }
@@ -234,51 +151,40 @@ import PainelLayout from "../layouts/PainelLayout.astro";
       }
     }
 
-    // 3. Delegação de eventos para Editar e Deletar
+    // 3. Delegação de eventos
     function configurarAcoesPastas() {
       const listaPastas = document.getElementById("lista-pastas");
 
       if (listaPastas && !listaPastas.dataset.ativoAcoes) {
         listaPastas.addEventListener("click", async (evento) => {
-          const btnDeletar = (evento.target as Element).closest(
-            ".btn-deletar-pasta",
-          ) as HTMLElement;
-          const btnEditar = (evento.target as Element).closest(
-            ".btn-editar-pasta",
-          ) as HTMLElement;
+          const btnDeletar = (evento.target as Element).closest(".btn-deletar-pasta") as HTMLElement;
+          const btnEditar = (evento.target as Element).closest(".btn-editar-pasta") as HTMLElement;
+          
+          // NOVO: Captura o clique na pasta em si (o botão inteiro)
+          const areaDaPasta = (evento.target as Element).closest(".pasta-item") as HTMLElement;
 
-          const API_URL =
-            import.meta.env.PUBLIC_API_URL || "http://localhost:3000";
+          const API_URL = import.meta.env.PUBLIC_API_URL || "http://localhost:3000";
           const token = obterToken();
           if (!token) return;
 
-          // --- DELETAR ---
+          // --- DELETAR PASTA ---
           if (btnDeletar) {
             evento.preventDefault();
             const idPasta = btnDeletar.dataset.id;
-
-            if (
-              confirm(
-                "Tem certeza que deseja excluir esta pasta e todas as notas dentro dela?",
-              )
-            ) {
+            if (confirm("Tem certeza que deseja excluir esta pasta e todas as notas dentro dela?")) {
               try {
-                const resposta = await fetch(
-                  `${API_URL}/api/pastas/${idPasta}`,
-                  {
-                    method: "DELETE",
-                    headers: { Authorization: `Bearer ${token}` }, // CRACHÁ
-                  },
-                );
+                const resposta = await fetch(`${API_URL}/api/pastas/${idPasta}`, {
+                  method: "DELETE",
+                  headers: { Authorization: `Bearer ${token}` },
+                });
                 if (resposta.ok) carregarPastas();
                 else alert("Erro ao deletar a pasta.");
-              } catch (erro) {
-                alert("Servidor offline.");
-              }
+              } catch (erro) { alert("Servidor offline."); }
             }
+            return; // Interrompe para não setar a pasta ativa enquanto deleta
           }
 
-          // --- EDITAR ---
+          // --- EDITAR PASTA ---
           if (btnEditar) {
             evento.preventDefault();
             const idPasta = btnEditar.dataset.id;
@@ -287,24 +193,35 @@ import PainelLayout from "../layouts/PainelLayout.astro";
 
             if (novoNome && novoNome.trim() !== "" && novoNome !== nomeAtual) {
               try {
-                const resposta = await fetch(
-                  `${API_URL}/api/pastas/${idPasta}`,
-                  {
-                    method: "PUT",
-                    headers: {
-                      "Content-Type": "application/json",
-                      Authorization: `Bearer ${token}`, // CRACHÁ
-                    },
-                    body: JSON.stringify({ nome: novoNome }),
+                const resposta = await fetch(`${API_URL}/api/pastas/${idPasta}`, {
+                  method: "PUT",
+                  headers: {
+                    "Content-Type": "application/json",
+                    Authorization: `Bearer ${token}`, 
                   },
-                );
-
+                  body: JSON.stringify({ nome: novoNome }),
+                });
                 if (resposta.ok) carregarPastas();
                 else alert("Erro ao renomear a pasta.");
-              } catch (erro) {
-                alert("Servidor offline.");
-              }
+              } catch (erro) { alert("Servidor offline."); }
             }
+            return; // Interrompe
+          }
+
+          // NOVO: SE NÃO CLICOU EM EDITAR NEM DELETAR, ENTÃO CLICOU NA PASTA!
+          if (areaDaPasta) {
+            pastaAtivaId = areaDaPasta.dataset.id;
+            
+            // UX Visual: Remove destaque de todas e destaca a que foi clicada
+            document.querySelectorAll('.pasta-item').forEach(el => {
+              el.classList.remove('text-zinc-100', 'bg-zinc-800/80');
+              el.classList.add('text-zinc-400');
+            });
+            areaDaPasta.classList.remove('text-zinc-400');
+            areaDaPasta.classList.add('text-zinc-100', 'bg-zinc-800/80');
+
+            console.log("Pasta ativa agora é a de ID:", pastaAtivaId);
+            // Aqui chamaremos a função carregarNotas(pastaAtivaId) no futuro
           }
         });
         listaPastas.dataset.ativoAcoes = "1";
@@ -313,7 +230,6 @@ import PainelLayout from "../layouts/PainelLayout.astro";
 
     // 4. Inicia tudo
     document.addEventListener("astro:page-load", () => {
-      // Executa um teste silencioso para ver se o token existe antes de carregar o resto
       if (obterToken()) {
         carregarPastas();
         configurarBotoes();
@@ -321,4 +237,3 @@ import PainelLayout from "../layouts/PainelLayout.astro";
       }
     });
   </script>
-</PainelLayout>

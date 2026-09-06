@@ -59,48 +59,8 @@ import Layout from "../layouts/Layout.astro";
   </main>
 
   <script>
-  // Esta função garante que o script só roda quando o Astro terminar de desenhar a tela
-  document.addEventListener("astro:page-load", () => {
-    const form = document.getElementById("form-login");
+    import { configurarLogin } from "../scripts/authController.js";
 
-    form?.addEventListener("submit", async (evento) => {
-      // ISSO AQUI CANCELA O ENVIO PELA URL! Tem que ser a primeira linha.
-      evento.preventDefault();
-
-      const usuarioInput = document.getElementById("usuario") as HTMLInputElement;
-      const senhaInput = document.getElementById("senha") as HTMLInputElement;
-
-      // Validação rápida para evitar enviar campos vazios
-      if (!usuarioInput.value || !senhaInput.value) {
-        alert("Preencha todos os campos!");
-        return;
-      }
-
-      const API_URL = import.meta.env.PUBLIC_API_URL || "http://localhost:3000";
-
-      try {
-        const resposta = await fetch(`${API_URL}/api/login`, {
-          method: "POST", // Aqui a senha vai escondida no corpo (Body)
-          headers: { "Content-Type": "application/json" },
-          body: JSON.stringify({ 
-            usuario: usuarioInput.value, 
-            senha: senhaInput.value 
-          }),
-        });
-
-        const dados = await resposta.json();
-
-        if (resposta.ok) {
-          localStorage.setItem("eva_token", dados.token);
-          window.location.href = "/painel";
-        } else {
-          alert(dados.mensagem || "Erro ao fazer login");
-        }
-      } catch (erro) {
-        console.error("Erro:", erro);
-        alert("O servidor backend está offline.");
-      }
-    });
-  });
-</script>
+    document.addEventListener("astro:page-load", configurarLogin);
+  </script>
 </Layout>

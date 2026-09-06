@@ -66,44 +66,8 @@ import Layout from "../layouts/Layout.astro";
     </form>
   </main>
   <script>
-    const form = document.getElementById("form-email");
+    import { configurarCadastro } from "../scripts/authController.js";
 
-    // O ponto de interrogação (?) avisa: "Só adicione o evento se o form existir"
-    form?.addEventListener("submit", async (evento) => {
-      evento.preventDefault();
-
-      // O "as HTMLInputElement" é só um crachá para o VS Code saber que tem um .value
-      const usuario = (document.getElementById("usuario") as HTMLInputElement)
-        .value;
-      const email = (document.getElementById("email") as HTMLInputElement)
-        .value;
-      const senha = (document.getElementById("senha") as HTMLInputElement)
-        .value;
-
-      const API_URL = import.meta.env.PUBLIC_API_URL || "http://localhost:3000";
-
-      try {
-        const resposta = await fetch(`${API_URL}/api/cadastro`, {
-          method: "POST",
-          headers: { "Content-Type": "application/json" },
-          body: JSON.stringify({ usuario, email, senha }),
-        });
-
-        const dados = await resposta.json();
-
-        if (resposta.ok) {
-          // Salva o token no navegador
-          localStorage.setItem("eva_token", dados.token);
-
-          // Redireciona para o painel
-          window.location.href = "/painel";
-        } else {
-          alert(dados.mensagem || "Erro ao cadastrar");
-        }
-      } catch (erro) {
-        console.error("Erro:", erro);
-        alert("O servidor backend está offline.");
-      }
-    });
+    document.addEventListener("astro:page-load", configurarCadastro);
   </script>
 </Layout>

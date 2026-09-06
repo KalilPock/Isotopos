@@ -1,75 +1,40 @@
-const supabase = require("../config/supabase");
+const notasModel = require("../models/notas.model");
 
 exports.criarNota = async (req, res) => {
-  const { titulo, pasta_id } = req.body;
-
-  if (!titulo || !pasta_id) {
-    return res.status(400).json({
-      sucesso: false,
-      mensagem: "O titulo e o ID da pasta são obrigatórios",
-    });
+  const { titulo, pasta_id: pastaId } = req.body;
+  if (!titulo || !pastaId) {
+    return res.status(400).json({ sucesso: false, mensagem: "O titulo e o ID da pasta são obrigatórios" });
   }
 
-  //inserir a nota com a chave estrangeira da pasta
-  const { data, error } = await supabase
-    .from("notas")
-    .insert([{ titulo, pasta_id, conteudo: "" }])
-    .select();
-
+  const { data, error } = await notasModel.criar(titulo, pastaId);
   if (error) {
-    console.error(`[Backend] Erro ao criar a nota: `, error.message);
+    console.error("[Backend] Erro ao criar a nota:", error.message);
     return res.status(500).json({ sucesso: false, mensagem: error.message });
   }
-
   res.status(201).json({ sucesso: true, nota: data[0] });
 };
 
-// A FUNÇÃO QUE ESTAVA FALTANDO!
 exports.listarNotasDaPasta = async (req, res) => {
-  const { pasta_id } = req.params;
-
-  const { data, error } = await supabase
-    .from('notas')
-    .select('*')
-    .eq('pasta_id', pasta_id)
-    .order('criado_em', { ascending: false }); 
-  
+  const { pasta_id: pastaId } = req.params;
+  const { data, error } = await notasModel.listarPorPasta(pastaId);
   if (error) return res.status(500).json({ sucesso: false, mensagem: error.message });
-  
   res.status(200).json({ sucesso: true, notas: data });
 };
 
-// CORRIGIDO: Adicionado o "r" no nome (atualizarNota)
 exports.atualizarNota = async (req, res) => {
   const { id } = req.params;
   const { titulo, conteudo } = req.body;
-
   const atualizacoes = {};
   if (titulo !== undefined) atualizacoes.titulo = titulo;
   if (conteudo !== undefined) atualizacoes.conteudo = conteudo;
 
-  const { data, error } = await supabase
-    .from("notas")
-    .update(atualizacoes)
-    .eq("id", id)
-    .select();
-
-  if (error) {
-    return res.status(500).json({ sucesso: false, mensagem: error.message });
-  }
-
+  const { data, error } = await notasModel.atualizar(id, atualizacoes);
+  if (error) return res.status(500).json({ sucesso: false, mensagem: error.message });
   res.status(200).json({ sucesso: true, notas: data });
 };
 
 exports.deletarNota = async (req, res) => {
-  const { id } = req.params;
-  const { error } = await supabase.from("notas").delete().eq("id", id);
-
-  if(error){
-    return res.status(500).json({sucesso: false, mensagem: error.message})
-  }
-
-  res.status(200).json({
-    sucesso: true, mensagem: "nota deletada!"
-  })
+  const { error } = await notasModel.remover(req.params.id);
+  if (error) return res.status(500).json({ sucesso: false, mensagem: error.message });
+  res.status(200).json({ sucesso: true, mensagem: "nota deletada!" });
 };

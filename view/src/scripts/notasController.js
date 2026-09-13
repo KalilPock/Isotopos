@@ -1,5 +1,15 @@
 let limparGerenciadorNotasAnterior = null;
 
+function escaparHtml(valor) {
+  return String(valor).replace(/[&<>"']/g, (caractere) => ({
+    "&": "&amp;",
+    "<": "&lt;",
+    ">": "&gt;",
+    '"': "&quot;",
+    "'": "&#39;",
+  })[caractere]);
+}
+
 export function iniciarGerenciadorNotas() {
   limparGerenciadorNotasAnterior?.();
   const abortController = new AbortController();
@@ -31,7 +41,7 @@ export function iniciarGerenciadorNotas() {
     if (!modal || !inputNome || !titulo || !btnConfirmar) return;
 
     pastaEmEdicaoId = id;
-    titulo.innerText = id ? "Renomear Pasta" : "Criar Nova Pasta";
+    titulo.innerText = id ? "Renomear Pasta" : pastaAtivaId ? "Criar Subpasta" : "Criar Nova Pasta";
     btnConfirmar.innerText = id ? "Salvar" : "Criar";
     inputNome.value = nome;
     modal.classList.remove("hidden");
@@ -58,29 +68,42 @@ export function iniciarGerenciadorNotas() {
         const wrapper = document.getElementById("gavetas-wrapper");
         if (!wrapper) return;
 
-        dados.pastas.forEach((pasta) => {
-          wrapper.innerHTML += `
-            <details class="group relative">
-              <summary data-id="${pasta.id}" class="pasta-item flex items-center justify-between p-1.5 rounded hover:bg-zinc-800/50 cursor-pointer list-none text-zinc-400 transition-colors">
-                <div class="flex items-center gap-1.5 pointer-events-none">
-                  <svg class="w-4 h-4 transition-transform group-open:rotate-90" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"></path></svg>
-                  <span class="truncate max-w-[130px]" title="${pasta.nome}">${pasta.nome}</span>
-                </div>
-                <div class="hidden group-hover:flex items-center gap-1 pr-1">
-                  <button data-id="${pasta.id}" data-nome="${pasta.nome}" class="btn-editar-pasta p-1 hover:text-blue-400 transition-colors" title="Renomear">
-                    <svg class="w-3.5 h-3.5 pointer-events-none" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15.232 5.232l3.536 3.536m-2.036-5.036a2.5 2.5 0 113.536 3.536L6.5 21.036H3v-3.572L16.732 3.732z"></path></svg>
-                  </button>
-                  <button data-id="${pasta.id}" class="btn-deletar-pasta p-1 hover:text-red-500 transition-colors" title="Excluir">
-                    <svg class="w-3.5 h-3.5 pointer-events-none" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16"></path></svg>
-                  </button>
-                </div>
-              </summary>
-              <div id="notas-pasta-${pasta.id}" class="pl-4 ml-1.5 border-l border-zinc-800 mt-1 space-y-1 text-sm text-zinc-400">
+        const pastasPorPai = dados.pastas.reduce((grupos, pasta) => {
+          const chave = pasta.pai_id ?? "raiz";
+          (grupos[chave] ??= []).push(pasta);
+          return grupos;
+        }, {});
+
+        const renderizarPastas = (paiId = "raiz") => (pastasPorPai[paiId] || []).map((pasta) => {
+          const idSeguro = escaparHtml(pasta.id);
+          const nomeSeguro = escaparHtml(pasta.nome);
+          return `
+          <details class="group relative">
+            <summary data-id="${idSeguro}" class="pasta-item flex items-center justify-between p-1.5 rounded hover:bg-zinc-800/50 cursor-pointer list-none text-zinc-400 transition-colors">
+              <div class="flex items-center gap-1.5 pointer-events-none">
+                <svg class="w-4 h-4 transition-transform group-open:rotate-90" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"></path></svg>
+                <span class="truncate max-w-[130px]" title="${nomeSeguro}">${nomeSeguro}</span>
+              </div>
+              <div class="hidden group-hover:flex items-center gap-1 pr-1">
+                <button data-id="${idSeguro}" data-nome="${nomeSeguro}" class="btn-editar-pasta p-1 hover:text-blue-400 transition-colors" title="Renomear">
+                  <svg class="w-3.5 h-3.5 pointer-events-none" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15.232 5.232l3.536 3.536m-2.036-5.036a2.5 2.5 0 113.536 3.536L6.5 21.036H3v-3.572L16.732 3.732z"></path></svg>
+                </button>
+                <button data-id="${idSeguro}" class="btn-deletar-pasta p-1 hover:text-red-500 transition-colors" title="Excluir">
+                  <svg class="w-3.5 h-3.5 pointer-events-none" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1v3M4 7h16"></path></svg>
+                </button>
+              </div>
+            </summary>
+            <div class="pl-4 ml-1.5 border-l border-zinc-800 mt-1 space-y-1">
+              ${renderizarPastas(pasta.id).join("")}
+              <div id="notas-pasta-${idSeguro}" class="space-y-1 text-sm text-zinc-400">
                 <p class="text-xs text-zinc-600 italic">Sem notas...</p>
               </div>
-            </details>
+            </div>
+          </details>
           `;
         });
+
+        wrapper.innerHTML = renderizarPastas().join("");
       } else {
         container.innerHTML = `
           <div class="text-center text-zinc-600 mt-10 flex flex-col items-center">
@@ -113,15 +136,17 @@ export function iniciarGerenciadorNotas() {
       if (dados.sucesso && dados.notas.length > 0) {
         containerNotas.innerHTML = "";
         listaNotasAtual = dados.notas;
-        dados.notas.forEach((nota) => {
+          dados.notas.forEach((nota) => {
+            const tituloSeguro = escaparHtml(nota.titulo);
+            const idSeguro = escaparHtml(nota.id);
           containerNotas.innerHTML += `
-            <div data-id="${nota.id}" class="nota-item p-1.5 rounded hover:bg-zinc-800/80 cursor-pointer flex items-center justify-between group/nota transition-colors">
-              <span class="truncate">${nota.titulo}</span>
+            <div data-id="${idSeguro}" class="nota-item p-1.5 rounded hover:bg-zinc-800/80 cursor-pointer flex items-center justify-between group/nota transition-colors">
+              <span class="truncate">${tituloSeguro}</span>
               <div class="hidden group-hover/nota:flex items-center gap-1">
-                <button data-id="${nota.id}" class="btn-editar-nota p-1 hover:text-blue-400 transition-colors" title="Editar Nota">
+                <button data-id="${idSeguro}" class="btn-editar-nota p-1 hover:text-blue-400 transition-colors" title="Editar Nota">
                   <svg class="w-3.5 h-3.5 pointer-events-none" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15.232 5.232l3.536 3.536m-2.036-5.036a2.5 2.5 0 113.536 3.536L6.5 21.036H3v-3.572L16.732 3.732z"></path></svg>
                 </button>
-                <button data-id="${nota.id}" class="btn-deletar-nota p-1 hover:text-red-500 transition-colors" title="Excluir Nota">
+                <button data-id="${idSeguro}" class="btn-deletar-nota p-1 hover:text-red-500 transition-colors" title="Excluir Nota">
                   <svg class="w-3.5 h-3.5 pointer-events-none" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 01-1 1v3M4 7h16"></path></svg>
                 </button>
               </div>
@@ -327,7 +352,7 @@ export function iniciarGerenciadorNotas() {
     const processarCriacao = async () => {
       const nomeNota = inputTitulo.value.trim();
       const token = obterToken();
-      if (!nomeNota || !token || !pastaAtivaId) return;
+      if (!nomeNota || nomeNota.length > 200 || !token || !pastaAtivaId) return;
       btnConfirmar.innerText = "Criando...";
       try {
         const API_URL = import.meta.env.PUBLIC_API_URL || "http://localhost:3000";
@@ -368,7 +393,7 @@ export function iniciarGerenciadorNotas() {
     const processarCriacao = async () => {
       const nomePasta = inputNome.value.trim();
       const token = obterToken();
-      if (!nomePasta || !token) return;
+      if (!nomePasta || nomePasta.length > 120 || !token) return;
       btnConfirmar.innerText = pastaEmEdicaoId ? "Salvando..." : "Criando...";
       const API_URL = import.meta.env.PUBLIC_API_URL || "http://localhost:3000";
       const endpoint = pastaEmEdicaoId ? `${API_URL}/api/pastas/${pastaEmEdicaoId}` : `${API_URL}/api/pastas`;
@@ -376,7 +401,7 @@ export function iniciarGerenciadorNotas() {
         const resposta = await fetch(endpoint, {
           method: pastaEmEdicaoId ? "PUT" : "POST",
           headers: { "Content-Type": "application/json", Authorization: `Bearer ${token}` },
-          body: JSON.stringify({ nome: nomePasta }),
+          body: JSON.stringify({ nome: nomePasta, pai_id: pastaEmEdicaoId ? null : pastaAtivaId }),
         });
         if (resposta.ok) {
           fecharModal();

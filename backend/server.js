@@ -3,6 +3,8 @@
 require("dotenv").config();
 const express = require("express");
 const cors = require('cors');
+const helmet = require("helmet");
+const rateLimit = require("express-rate-limit");
 
 //ativando Middleware
 // Importação dos Módulos (Routers)
@@ -13,8 +15,28 @@ const verificarToken = require('./middlewares/auth.middleware');
 
 const app = express();
 
-app.use(cors());
-app.use(express.json());
+const origensPermitidas = (process.env.FRONTEND_URL || (process.env.NODE_ENV === "production" ? "" : "http://localhost:4321"))
+  .split(",")
+  .map((origem) => origem.trim())
+  .filter(Boolean);
+const limiteAutenticacao = rateLimit({
+  windowMs: 15 * 60 * 1000,
+  limit: 20,
+  standardHeaders: "draft-8",
+  legacyHeaders: false,
+  message: { sucesso: false, mensagem: "Muitas tentativas. Tente novamente mais tarde." },
+});
+
+app.use(helmet());
+app.use(cors({
+  origin(origem, callback) {
+    if (!origem || origensPermitidas.includes(origem)) return callback(null, true);
+    return callback(new Error("Origem não permitida"));
+  },
+}));
+app.use(express.json({ limit: "100kb" }));
+app.use("/api/login", limiteAutenticacao);
+app.use("/api/cadastro", limiteAutenticacao);
 app.use('/api/notas', verificarToken, notasRoutes); // 
 
 // Rota de Status (Deixamos direto aqui para verificações rápidas de integridade do Render)

@@ -3,13 +3,43 @@ import PainelLayout from '../layouts/PainelLayout.astro';
 ---
 
 <PainelLayout title="Painel de Usuários - Isótopos">
-  
-  <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
-    <!-- Card 1: Status da API -->
-    <div class="bg-zinc-900 p-6 rounded-xl border border-zinc-800 shadow-sm">
-      <h3 class="text-zinc-400 font-medium text-sm">Painel de usuários</h3>
-      <p class="text-2xl font-bold text-emerald-400">Online</p>
-    </div>
-  </div>
+  <div class="space-y-6">
+    <section class="flex flex-col gap-2 md:flex-row md:items-end md:justify-between">
+      <div>
+        <p class="text-xs font-semibold uppercase tracking-[0.22em] text-purple-400">Presença da equipe</p>
+        <h2 class="mt-2 text-2xl font-bold text-white">Usuários ativos</h2>
+        <p class="mt-1 text-sm text-zinc-500">Acompanhe quem está conectado ao espaço agora.</p>
+      </div>
+      <div class="flex items-center gap-2 text-xs text-zinc-500">
+        <span class="h-2 w-2 rounded-full bg-emerald-400 shadow-[0_0_12px_rgba(74,222,128,0.8)]"></span>
+        Atualizado agora
+      </div>
+    </section>
 
+    <section class="grid grid-cols-1 gap-4 sm:grid-cols-3">
+      <div class="rounded-xl border border-emerald-500/20 bg-emerald-500/[0.06] p-5">
+        <div class="flex items-center justify-between"><p class="text-sm text-zinc-400">Online agora</p><span class="h-2.5 w-2.5 rounded-full bg-emerald-400"></span></div>
+        <p class="mt-3 text-3xl font-bold text-emerald-300">04</p><p class="mt-1 text-xs text-zinc-500">conectados neste momento</p>
+      </div>
+      <div class="rounded-xl border border-zinc-800 bg-zinc-900 p-5">
+        <p class="text-sm text-zinc-400">Atividade hoje</p><p class="mt-3 text-3xl font-bold text-white">12</p><p class="mt-1 text-xs text-zinc-500">usuários acessaram o painel</p>
+      </div>
+      <div class="rounded-xl border border-zinc-800 bg-zinc-900 p-5">
+        <p class="text-sm text-zinc-400">Último acesso</p><p class="mt-3 text-3xl font-bold text-purple-300">2 min</p><p class="mt-1 text-xs text-zinc-500">desde a última entrada</p>
+      </div>
+    </section>
+
+    <section class="overflow-hidden rounded-xl border border-zinc-800 bg-zinc-900">
+      <div class="flex flex-col gap-3 border-b border-zinc-800 px-5 py-4 sm:flex-row sm:items-center sm:justify-between">
+        <div><h3 class="font-semibold text-white">Pessoas conectadas</h3><p class="mt-1 text-xs text-zinc-500">Sessões ativas no ambiente Isótopos.</p></div>
+        <button type="button" class="rounded-lg border border-zinc-700 px-3 py-2 text-xs font-medium text-zinc-300 transition hover:border-purple-500 hover:text-white">Ver histórico</button>
+      </div>
+
+      <div class="divide-y divide-zinc-800">
+        <article class="flex flex-col gap-3 px-5 py-4 sm:flex-row sm:items-center sm:justify-between"><div class="flex items-center gap-3"><div class="relative flex h-10 w-10 items-center justify-center rounded-full bg-purple-600/80 font-semibold text-white">KP<span class="absolute bottom-0 right-0 h-3 w-3 rounded-full border-2 border-zinc-900 bg-emerald-400"></span></div><div><h4 class="text-sm font-medium text-white">Kalil Pock</h4><p class="text-xs text-zinc-500">Administrador · trabalhando agora</p></div></div><span class="text-xs text-emerald-400">Online</span></article>
+        <article class="flex flex-col gap-3 px-5 py-4 sm:flex-row sm:items-center sm:justify-between"><div class="flex items-center gap-3"><div class="relative flex h-10 w-10 items-center justify-center rounded-full bg-blue-600/80 font-semibold text-white">AM<span class="absolute bottom-0 right-0 h-3 w-3 rounded-full border-2 border-zinc-900 bg-emerald-400"></span></div><div><h4 class="text-sm font-medium text-white">Ana Martins</h4><p class="text-xs text-zinc-500">Editando uma anotação</p></div></div><span class="text-xs text-emerald-400">Online</span></article>
+        <article class="flex flex-col gap-3 px-5 py-4 sm:flex-row sm:items-center sm:justify-between"><div class="flex items-center gap-3"><div class="relative flex h-10 w-10 items-center justify-center rounded-full bg-amber-600/80 font-semibold text-white">RS<span class="absolute bottom-0 right-0 h-3 w-3 rounded-full border-2 border-zinc-900 bg-amber-400"></span></div><div><h4 class="text-sm font-medium text-white">Rafael Souza</h4><p class="text-xs text-zinc-500">Última atividade há 8 min</p></div></div><span class="text-xs text-amber-400">Ausente</span></article>
+      </div>
+    </section>
+  </div>
 </PainelLayout>

@@ -15,10 +15,14 @@ const verificarToken = require('./middlewares/auth.middleware');
 
 const app = express();
 
-const origensPermitidas = (process.env.FRONTEND_URL || (process.env.NODE_ENV === "production" ? "" : "http://localhost:4321"))
+const origensConfiguradas = (process.env.FRONTEND_URL || "")
   .split(",")
   .map((origem) => origem.trim())
   .filter(Boolean);
+const origensLocais = process.env.NODE_ENV === "production"
+  ? []
+  : ["http://localhost:4321", "http://127.0.0.1:4321"];
+const origensPermitidas = [...new Set([...origensConfiguradas, ...origensLocais])];
 const limiteAutenticacao = rateLimit({
   windowMs: 15 * 60 * 1000,
   limit: 20,

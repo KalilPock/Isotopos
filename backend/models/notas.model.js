@@ -7,6 +7,10 @@ function criar(titulo, pastaId) {
     .select();
 }
 
+function buscarPorId(id) {
+  return supabase.from("notas").select("id,pasta_id").eq("id", id).maybeSingle();
+}
+
 function listarPorPasta(pastaId) {
   return supabase
     .from("notas")
@@ -23,4 +27,4 @@ function remover(id) {
   return supabase.from("notas").delete().eq("id", id);
 }
 
-module.exports = { criar, listarPorPasta, atualizar, remover };
+module.exports = { criar, listarPorPasta, atualizar, remover, buscarPorId };

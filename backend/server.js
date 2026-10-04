@@ -31,6 +31,9 @@ const limiteAutenticacao = rateLimit({
   message: { sucesso: false, mensagem: "Muitas tentativas. Tente novamente mais tarde." },
 });
 
+app.set("trust proxy", 1);
+app.use(helmet());
+
 app.use(helmet());
 app.use(cors({
   origin(origem, callback) {
